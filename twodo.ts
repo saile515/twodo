@@ -8,10 +8,10 @@ import Buffer from "./src/graphics/buffer.ts";
 import Shader from "./src/graphics/shader.ts";
 import Texture from "./src/graphics/texture.ts";
 
-import Camera from "./src/components/camera.ts";
+import Camera, { CameraBundle } from "./src/components/camera.ts";
 import Sprite from "./src/components/sprite.ts";
 import Transform from "./src/components/sprite.ts";
 
 import { Vector2 } from "./src/types/vector.ts";
 
-export { Scene, ECS, Component, Entity, Buffer, Shader, Texture, Camera, Sprite, Transform, Vector2 };
+export { Scene, ECS, Component, Entity, Buffer, Shader, Texture, Camera, CameraBundle, Sprite, Transform, Vector2 };
