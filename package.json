@@ -1,6 +1,6 @@
 {
     "name": "twodo",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "A minimal 2D WebGL engine.",
     "main": "twodo.ts",
     "scripts": {

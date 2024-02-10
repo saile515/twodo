@@ -10,7 +10,7 @@ import Texture from "./src/graphics/texture.ts";
 
 import Camera, { CameraBundle } from "./src/components/camera.ts";
 import Sprite from "./src/components/sprite.ts";
-import Transform from "./src/components/sprite.ts";
+import Transform from "./src/components/transform.ts";
 
 import { Vector2 } from "./src/types/vector.ts";
 
