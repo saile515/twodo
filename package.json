@@ -1,0 +1,27 @@
+{
+    "name": "twodo",
+    "version": "0.0.1",
+    "description": "A minimal 2D WebGL engine.",
+    "main": "twodo.ts",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/saile515/twodo.git"
+    },
+    "keywords": [
+        "2D",
+        "WebGL",
+        "Engine"
+    ],
+    "author": "saile515",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/saile515/twodo/issues"
+    },
+    "homepage": "https://github.com/saile515/twodo#readme",
+    "dependencies": {
+        "gl-matrix": "^3.4.3"
+    }
+}
