@@ -14,5 +14,4 @@ import Transform from "./src/components/sprite.ts";
 
 import { Vector2 } from "./src/types/vector.ts";
 
-const Twodo = { Scene, ECS, Component, Entity, Buffer, Shader, Texture, Camera, Sprite, Transform, Vector2 };
-export default Twodo;
+export { Scene, ECS, Component, Entity, Buffer, Shader, Texture, Camera, Sprite, Transform, Vector2 };
