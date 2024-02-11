@@ -1,8 +1,8 @@
 import type Buffer from "./buffer";
 
 export default class Shader<Attributes extends string[], Uniforms extends string[]> {
-    private _vertex_path: string;
-    private _fragment_path: string;
+    private _vertex: string;
+    private _fragment: string;
     private _attribute_keys: Attributes;
     private _uniform_keys: Uniforms;
     private _program: WebGLProgram;
@@ -11,9 +11,9 @@ export default class Shader<Attributes extends string[], Uniforms extends string
         [key in Uniforms[number]]: WebGLUniformLocation;
     };
 
-    constructor(vertex_path: string, fragment_path: string, attributes: Attributes, uniforms: Uniforms) {
-        this._vertex_path = vertex_path;
-        this._fragment_path = fragment_path;
+    constructor(vertex: string, fragment: string, attributes: Attributes, uniforms: Uniforms) {
+        this._vertex = vertex;
+        this._fragment = fragment;
         this._attribute_keys = attributes;
         this._uniform_keys = uniforms;
 
@@ -22,9 +22,8 @@ export default class Shader<Attributes extends string[], Uniforms extends string
 
     async compile() {
         // Compile vertex shader
-        const vertex_source = await fetch(this._vertex_path).then((res) => res.text());
         const vertex_shader = gl.createShader(gl.VERTEX_SHADER)!;
-        gl.shaderSource(vertex_shader, vertex_source);
+        gl.shaderSource(vertex_shader, this._vertex);
         gl.compileShader(vertex_shader);
 
         // Verify vertex shader
@@ -35,9 +34,8 @@ export default class Shader<Attributes extends string[], Uniforms extends string
         }
 
         // Compile fragment shader
-        const fragment_source = await fetch(this._fragment_path).then((res) => res.text());
         const fragment_shader = gl.createShader(gl.FRAGMENT_SHADER)!;
-        gl.shaderSource(fragment_shader, fragment_source);
+        gl.shaderSource(fragment_shader, this._fragment);
         gl.compileShader(fragment_shader);
 
         // Verify fragment shader

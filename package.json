@@ -2,14 +2,12 @@
     "name": "twodo",
     "version": "0.0.4",
     "description": "A minimal 2D WebGL engine.",
-    "main": "twodo.ts",
+    "main": "dist/twodo.es.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "tsc && vite build"
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/saile515/twodo.git"
-    },
+    "repository": "git+https://github.com/saile515/twodo.git",
     "keywords": [
         "2D",
         "WebGL",
@@ -21,7 +19,12 @@
         "url": "https://github.com/saile515/twodo/issues"
     },
     "homepage": "https://github.com/saile515/twodo#readme",
-    "dependencies": {
-        "gl-matrix": "^3.4.3"
+    "devDependencies": {
+        "@types/node": "^20.11.17",
+        "gl-matrix": "^3.4.3",
+        "path": "^0.12.7",
+        "typescript": "^5.3.3",
+        "vite": "^5.1.1",
+        "vite-plugin-dts": "^3.7.2"
     }
 }

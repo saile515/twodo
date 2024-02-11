@@ -2,7 +2,7 @@ import { Vector2 } from "../types/vector.ts";
 
 export default class Mouse {
     private _position = new Vector2(0, 0);
-    private _last_position: Vector2;
+    private _last_position: Vector2 | null = null;
 
     constructor() {
         window.addEventListener("mousemove", (event) => {

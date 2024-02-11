@@ -2,6 +2,8 @@ import Component from "../ecs/component.ts";
 import Texture from "../graphics/texture.ts";
 import Shader from "../graphics/shader.ts";
 import { draw } from "../graphics/webgl.ts";
+import sprite_vertex_shader from "../../shaders/sprite.vert.glsl?raw";
+import sprite_fragment_shader from "../../shaders/sprite.frag.glsl?raw";
 
 // vp_matrix = view projection matrix
 let _sprite_shader: Shader<[], ["sampler", "vp_matrix", "model_matrix"]>;
@@ -46,8 +48,8 @@ export default class Sprite extends Component {
         if (_sprite_shader && !_shader_ready) return;
 
         _sprite_shader = new Shader<[], ["sampler", "vp_matrix", "model_matrix"]>(
-            "/shaders/sprite.vert.glsl",
-            "/shaders/sprite.frag.glsl",
+            sprite_vertex_shader,
+            sprite_fragment_shader,
             [],
             ["sampler", "vp_matrix", "model_matrix"],
         );
