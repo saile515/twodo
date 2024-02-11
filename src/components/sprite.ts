@@ -6,7 +6,7 @@ import sprite_vertex_shader from "../../shaders/sprite.vert.glsl?raw";
 import sprite_fragment_shader from "../../shaders/sprite.frag.glsl?raw";
 
 // vp_matrix = view projection matrix
-let _sprite_shader: Shader<[], ["sampler", "vp_matrix", "model_matrix"]>;
+let _sprite_shader: Shader<[], ["sampler", "vp_matrix", "model_matrix", "depth"]>;
 let _shader_ready = false;
 
 export default class Sprite extends Component {
@@ -33,6 +33,7 @@ export default class Sprite extends Component {
             return;
         }
 
+        this._texture.use();
         Sprite.shader.set_uniform_int("sampler", [0], 1);
 
         draw();
@@ -47,11 +48,11 @@ export default class Sprite extends Component {
         if (_sprite_shader && _shader_ready) return _sprite_shader;
         if (_sprite_shader && !_shader_ready) return;
 
-        _sprite_shader = new Shader<[], ["sampler", "vp_matrix", "model_matrix"]>(
+        _sprite_shader = new Shader<[], ["sampler", "vp_matrix", "model_matrix", "depth"]>(
             sprite_vertex_shader,
             sprite_fragment_shader,
             [],
-            ["sampler", "vp_matrix", "model_matrix"],
+            ["sampler", "vp_matrix", "model_matrix", "depth"],
         );
 
         _sprite_shader.compile().then(() => {

@@ -1,7 +1,7 @@
 var U = Object.defineProperty;
-var L = (t, e, r) => e in t ? U(t, e, { enumerable: !0, configurable: !0, writable: !0, value: r }) : t[e] = r;
-var a = (t, e, r) => (L(t, typeof e != "symbol" ? e + "" : e, r), r);
-class D {
+var D = (t, e, r) => e in t ? U(t, e, { enumerable: !0, configurable: !0, writable: !0, value: r }) : t[e] = r;
+var a = (t, e, r) => (D(t, typeof e != "symbol" ? e + "" : e, r), r);
+class L {
   constructor() {
     a(this, "id", crypto.randomUUID());
   }
@@ -16,7 +16,7 @@ class M {
     this._components[r] || (this._components[r] = []), this._components[r].push(e);
   }
   create_entity(e) {
-    const r = new D();
+    const r = new L();
     return e.forEach((i) => {
       i.set_parent(r), this.add_component(i);
     }), this._entities.push(r), e;
@@ -143,6 +143,7 @@ const N = `#version 300 es
 
 uniform highp mat3 vp_matrix;
 uniform highp mat3 model_matrix;
+uniform highp float depth;
 
 out highp vec2 texture_position;
 
@@ -151,7 +152,7 @@ void main(void) {
     vertex_position.x = floor(float(gl_VertexID / 2)) - 0.5;
     vertex_position.y = mod(float(gl_VertexID), 2.0) - 0.5;
 
-    gl_Position = vec4((vp_matrix * model_matrix * vec3(vertex_position, 1.0)).xy, 0.0, 1.0);
+    gl_Position = vec4((vp_matrix * model_matrix * vec3(vertex_position, 1.0)).xy, depth, 1.0);
     texture_position = vertex_position + vec2(0.5);
 }
 `, G = `#version 300 es
@@ -166,7 +167,7 @@ void main(void) {
 }
 `;
 let x, w = !1;
-class p extends P {
+class d extends P {
   constructor(r) {
     super();
     a(this, "_texture");
@@ -179,7 +180,7 @@ class p extends P {
     });
   }
   draw() {
-    !this._texture_ready || !p.shader || (p.shader.set_uniform_int("sampler", [0], 1), X());
+    !this._texture_ready || !d.shader || (this._texture.use(), d.shader.set_uniform_int("sampler", [0], 1), X());
   }
   get failed() {
     return this._failed;
@@ -192,14 +193,14 @@ class p extends P {
         N,
         G,
         [],
-        ["sampler", "vp_matrix", "model_matrix"]
+        ["sampler", "vp_matrix", "model_matrix", "depth"]
       ), x.compile().then(() => {
         w = !0;
       }));
     }
   }
 }
-class d {
+class p {
   constructor(e, r) {
     a(this, "_x");
     a(this, "_y");
@@ -212,10 +213,10 @@ class d {
     return this._y;
   }
   static sub(e, r) {
-    return new d(e.x - r.x, e.y - r.y);
+    return new p(e.x - r.x, e.y - r.y);
   }
   static add(e, r) {
-    return new d(e.x + r.x, e.y + r.y);
+    return new p(e.x + r.x, e.y + r.y);
   }
 }
 var E = typeof Float32Array < "u" ? Float32Array : Array;
@@ -229,20 +230,20 @@ function v() {
   return E != Float32Array && (t[1] = 0, t[2] = 0, t[3] = 0, t[5] = 0, t[6] = 0, t[7] = 0), t[0] = 1, t[4] = 1, t[8] = 1, t;
 }
 function O(t, e) {
-  var r = e[0], i = e[1], n = e[2], _ = e[3], o = e[4], s = e[5], l = e[6], g = e[7], f = e[8], u = f * o - s * g, h = -f * _ + s * l, c = g * _ - o * l, m = r * u + i * h + n * c;
-  return m ? (m = 1 / m, t[0] = u * m, t[1] = (-f * i + n * g) * m, t[2] = (s * i - n * o) * m, t[3] = h * m, t[4] = (f * r - n * l) * m, t[5] = (-s * r + n * _) * m, t[6] = c * m, t[7] = (-g * r + i * l) * m, t[8] = (o * r - i * _) * m, t) : null;
+  var r = e[0], i = e[1], n = e[2], _ = e[3], o = e[4], s = e[5], l = e[6], m = e[7], f = e[8], u = f * o - s * m, h = -f * _ + s * l, c = m * _ - o * l, g = r * u + i * h + n * c;
+  return g ? (g = 1 / g, t[0] = u * g, t[1] = (-f * i + n * m) * g, t[2] = (s * i - n * o) * g, t[3] = h * g, t[4] = (f * r - n * l) * g, t[5] = (-s * r + n * _) * g, t[6] = c * g, t[7] = (-m * r + i * l) * g, t[8] = (o * r - i * _) * g, t) : null;
 }
 function k(t, e, r) {
-  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], g = e[6], f = e[7], u = e[8], h = r[0], c = r[1], m = r[2], T = r[3], y = r[4], A = r[5], R = r[6], b = r[7], S = r[8];
-  return t[0] = h * i + c * o + m * g, t[1] = h * n + c * s + m * f, t[2] = h * _ + c * l + m * u, t[3] = T * i + y * o + A * g, t[4] = T * n + y * s + A * f, t[5] = T * _ + y * l + A * u, t[6] = R * i + b * o + S * g, t[7] = R * n + b * s + S * f, t[8] = R * _ + b * l + S * u, t;
+  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], m = e[6], f = e[7], u = e[8], h = r[0], c = r[1], g = r[2], T = r[3], y = r[4], A = r[5], R = r[6], b = r[7], S = r[8];
+  return t[0] = h * i + c * o + g * m, t[1] = h * n + c * s + g * f, t[2] = h * _ + c * l + g * u, t[3] = T * i + y * o + A * m, t[4] = T * n + y * s + A * f, t[5] = T * _ + y * l + A * u, t[6] = R * i + b * o + S * m, t[7] = R * n + b * s + S * f, t[8] = R * _ + b * l + S * u, t;
 }
 function H(t, e, r) {
-  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], g = e[6], f = e[7], u = e[8], h = r[0], c = r[1];
-  return t[0] = i, t[1] = n, t[2] = _, t[3] = o, t[4] = s, t[5] = l, t[6] = h * i + c * o + g, t[7] = h * n + c * s + f, t[8] = h * _ + c * l + u, t;
+  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], m = e[6], f = e[7], u = e[8], h = r[0], c = r[1];
+  return t[0] = i, t[1] = n, t[2] = _, t[3] = o, t[4] = s, t[5] = l, t[6] = h * i + c * o + m, t[7] = h * n + c * s + f, t[8] = h * _ + c * l + u, t;
 }
 function V(t, e, r) {
-  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], g = e[6], f = e[7], u = e[8], h = Math.sin(r), c = Math.cos(r);
-  return t[0] = c * i + h * o, t[1] = c * n + h * s, t[2] = c * _ + h * l, t[3] = c * o - h * i, t[4] = c * s - h * n, t[5] = c * l - h * _, t[6] = g, t[7] = f, t[8] = u, t;
+  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], m = e[6], f = e[7], u = e[8], h = Math.sin(r), c = Math.cos(r);
+  return t[0] = c * i + h * o, t[1] = c * n + h * s, t[2] = c * _ + h * l, t[3] = c * o - h * i, t[4] = c * s - h * n, t[5] = c * l - h * _, t[6] = m, t[7] = f, t[8] = u, t;
 }
 function I(t, e, r) {
   var i = r[0], n = r[1];
@@ -275,9 +276,10 @@ class $ extends P {
   constructor() {
     super();
     a(this, "_matrix", v());
-    a(this, "_position", new d(0, 0));
-    a(this, "_scale", new d(1, 1));
+    a(this, "_position", new p(0, 0));
+    a(this, "_scale", new p(1, 1));
     a(this, "_rotation", 0);
+    a(this, "_depth", 0);
   }
   calculate_matrix() {
     Y(this._matrix, [this._position.x, this._position.y]), V(this._matrix, this._matrix, this._rotation * Math.PI / 180), I(this._matrix, this._matrix, [this._scale.x, this._scale.y]);
@@ -291,6 +293,9 @@ class $ extends P {
   set rotation(r) {
     this._rotation = r, this.calculate_matrix();
   }
+  set depth(r) {
+    this._depth = r;
+  }
   get position() {
     return this._position;
   }
@@ -300,23 +305,26 @@ class $ extends P {
   get rotation() {
     return this._rotation;
   }
+  get depth() {
+    return this._depth;
+  }
   get matrix() {
     return this._matrix;
   }
 }
 class q {
   constructor() {
-    a(this, "_position", new d(0, 0));
+    a(this, "_position", new p(0, 0));
     a(this, "_last_position", null);
     window.addEventListener("mousemove", (e) => {
-      this._position = new d(e.offsetX, e.offsetY);
+      this._position = new p(e.offsetX, e.offsetY);
     });
   }
   clear_delta() {
-    this._last_position = new d(this._position.x, this._position.y);
+    this._last_position = new p(this._position.x, this._position.y);
   }
   get delta() {
-    return d.sub(this._position, this._last_position || this._position);
+    return p.sub(this._position, this._last_position || this._position);
   }
 }
 class J {
@@ -338,14 +346,14 @@ class Z {
     this._active_camera = e;
   }
   draw() {
-    if (C(), !this._active_camera || !p.shader)
+    if (C(), console.log("Draw"), !this._active_camera || !d.shader)
       return;
-    p.shader.use();
+    d.shader.use();
     const e = v();
     O(e, this._active_camera[1].matrix);
     const r = v();
-    k(r, this._active_camera[0].projection_matrix, e), p.shader.set_uniform_matrix("vp_matrix", r, 3), this.ecs.query([p, $]).forEach(([i, n]) => {
-      p.shader.set_uniform_matrix("model_matrix", n.matrix, 3), i.draw();
+    k(r, this._active_camera[0].projection_matrix, e), d.shader.set_uniform_matrix("vp_matrix", r, 3), this.ecs.query([d, $]).forEach(([i, n]) => {
+      d.shader.set_uniform_matrix("model_matrix", n.matrix, 3), d.shader.set_uniform_float("depth", [n.depth], 1), i.draw();
     });
   }
 }
@@ -393,12 +401,12 @@ export {
   te as Camera,
   P as Component,
   M as ECS,
-  D as Entity,
+  L as Entity,
   J as InputManager,
   Z as Scene,
   j as Shader,
-  p as Sprite,
+  d as Sprite,
   F as Texture,
   $ as Transform,
-  d as Vector2
+  p as Vector2
 };

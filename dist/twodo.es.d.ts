@@ -93,7 +93,7 @@ export declare class Sprite extends Component {
     constructor(image_source: string);
     draw(): void;
     get failed(): boolean;
-    static get shader(): Shader<[], ["sampler", "vp_matrix", "model_matrix"]> | undefined;
+    static get shader(): Shader<[], ["sampler", "vp_matrix", "model_matrix", "depth"]> | undefined;
 }
 
 export declare class Texture {
@@ -111,14 +111,17 @@ export declare class Transform extends Component {
     private _position;
     private _scale;
     private _rotation;
+    private _depth;
     constructor();
     private calculate_matrix;
     set position(value: Vector2);
     set scale(value: Vector2);
     set rotation(value: number);
+    set depth(value: number);
     get position(): Vector2;
     get scale(): Vector2;
     get rotation(): number;
+    get depth(): number;
     get matrix(): mat3;
 }
 

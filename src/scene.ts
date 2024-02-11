@@ -40,6 +40,7 @@ export default class Scene {
 
         this.ecs.query<[Sprite, Transform]>([Sprite, Transform]).forEach(([sprite, transform]) => {
             Sprite.shader!.set_uniform_matrix("model_matrix", transform.matrix as Float32Array, 3);
+            Sprite.shader!.set_uniform_float("depth", [transform.depth], 1);
             sprite.draw();
         });
     }

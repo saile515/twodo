@@ -7,6 +7,7 @@ export default class Transform extends Component {
     private _position = new Vector2(0, 0);
     private _scale = new Vector2(1, 1);
     private _rotation = 0;
+    private _depth = 0;
 
     constructor() {
         super();
@@ -33,6 +34,10 @@ export default class Transform extends Component {
         this.calculate_matrix();
     }
 
+    set depth(value: number) {
+        this._depth = value;
+    }
+
     get position() {
         return this._position;
     }
@@ -43,6 +48,10 @@ export default class Transform extends Component {
 
     get rotation() {
         return this._rotation;
+    }
+
+    get depth() {
+        return this._depth;
     }
 
     get matrix() {
