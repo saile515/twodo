@@ -14,4 +14,12 @@ export class Vector2 {
     get y() {
         return this._y;
     }
+
+    static sub(a: Vector2, b: Vector2) {
+        return new Vector2(a.x - b.x, a.y - b.y);
+    }
+
+    static add(a: Vector2, b: Vector2) {
+        return new Vector2(a.x + b.x, a.y + b.y);
+    }
 }
