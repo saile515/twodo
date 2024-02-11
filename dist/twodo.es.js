@@ -1,7 +1,7 @@
 var U = Object.defineProperty;
-var D = (t, e, r) => e in t ? U(t, e, { enumerable: !0, configurable: !0, writable: !0, value: r }) : t[e] = r;
-var a = (t, e, r) => (D(t, typeof e != "symbol" ? e + "" : e, r), r);
-class L {
+var L = (t, e, r) => e in t ? U(t, e, { enumerable: !0, configurable: !0, writable: !0, value: r }) : t[e] = r;
+var a = (t, e, r) => (L(t, typeof e != "symbol" ? e + "" : e, r), r);
+class D {
   constructor() {
     a(this, "id", crypto.randomUUID());
   }
@@ -16,7 +16,7 @@ class M {
     this._components[r] || (this._components[r] = []), this._components[r].push(e);
   }
   create_entity(e) {
-    const r = new L();
+    const r = new D();
     return e.forEach((i) => {
       i.set_parent(r), this.add_component(i);
     }), this._entities.push(r), e;
@@ -230,20 +230,20 @@ function v() {
   return E != Float32Array && (t[1] = 0, t[2] = 0, t[3] = 0, t[5] = 0, t[6] = 0, t[7] = 0), t[0] = 1, t[4] = 1, t[8] = 1, t;
 }
 function O(t, e) {
-  var r = e[0], i = e[1], n = e[2], _ = e[3], o = e[4], s = e[5], l = e[6], m = e[7], f = e[8], u = f * o - s * m, h = -f * _ + s * l, c = m * _ - o * l, g = r * u + i * h + n * c;
-  return g ? (g = 1 / g, t[0] = u * g, t[1] = (-f * i + n * m) * g, t[2] = (s * i - n * o) * g, t[3] = h * g, t[4] = (f * r - n * l) * g, t[5] = (-s * r + n * _) * g, t[6] = c * g, t[7] = (-m * r + i * l) * g, t[8] = (o * r - i * _) * g, t) : null;
+  var r = e[0], i = e[1], n = e[2], _ = e[3], o = e[4], s = e[5], l = e[6], g = e[7], f = e[8], u = f * o - s * g, h = -f * _ + s * l, c = g * _ - o * l, m = r * u + i * h + n * c;
+  return m ? (m = 1 / m, t[0] = u * m, t[1] = (-f * i + n * g) * m, t[2] = (s * i - n * o) * m, t[3] = h * m, t[4] = (f * r - n * l) * m, t[5] = (-s * r + n * _) * m, t[6] = c * m, t[7] = (-g * r + i * l) * m, t[8] = (o * r - i * _) * m, t) : null;
 }
 function k(t, e, r) {
-  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], m = e[6], f = e[7], u = e[8], h = r[0], c = r[1], g = r[2], T = r[3], y = r[4], A = r[5], R = r[6], b = r[7], S = r[8];
-  return t[0] = h * i + c * o + g * m, t[1] = h * n + c * s + g * f, t[2] = h * _ + c * l + g * u, t[3] = T * i + y * o + A * m, t[4] = T * n + y * s + A * f, t[5] = T * _ + y * l + A * u, t[6] = R * i + b * o + S * m, t[7] = R * n + b * s + S * f, t[8] = R * _ + b * l + S * u, t;
+  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], g = e[6], f = e[7], u = e[8], h = r[0], c = r[1], m = r[2], T = r[3], y = r[4], A = r[5], R = r[6], b = r[7], S = r[8];
+  return t[0] = h * i + c * o + m * g, t[1] = h * n + c * s + m * f, t[2] = h * _ + c * l + m * u, t[3] = T * i + y * o + A * g, t[4] = T * n + y * s + A * f, t[5] = T * _ + y * l + A * u, t[6] = R * i + b * o + S * g, t[7] = R * n + b * s + S * f, t[8] = R * _ + b * l + S * u, t;
 }
 function H(t, e, r) {
-  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], m = e[6], f = e[7], u = e[8], h = r[0], c = r[1];
-  return t[0] = i, t[1] = n, t[2] = _, t[3] = o, t[4] = s, t[5] = l, t[6] = h * i + c * o + m, t[7] = h * n + c * s + f, t[8] = h * _ + c * l + u, t;
+  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], g = e[6], f = e[7], u = e[8], h = r[0], c = r[1];
+  return t[0] = i, t[1] = n, t[2] = _, t[3] = o, t[4] = s, t[5] = l, t[6] = h * i + c * o + g, t[7] = h * n + c * s + f, t[8] = h * _ + c * l + u, t;
 }
 function V(t, e, r) {
-  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], m = e[6], f = e[7], u = e[8], h = Math.sin(r), c = Math.cos(r);
-  return t[0] = c * i + h * o, t[1] = c * n + h * s, t[2] = c * _ + h * l, t[3] = c * o - h * i, t[4] = c * s - h * n, t[5] = c * l - h * _, t[6] = m, t[7] = f, t[8] = u, t;
+  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], g = e[6], f = e[7], u = e[8], h = Math.sin(r), c = Math.cos(r);
+  return t[0] = c * i + h * o, t[1] = c * n + h * s, t[2] = c * _ + h * l, t[3] = c * o - h * i, t[4] = c * s - h * n, t[5] = c * l - h * _, t[6] = g, t[7] = f, t[8] = u, t;
 }
 function I(t, e, r) {
   var i = r[0], n = r[1];
@@ -346,7 +346,7 @@ class Z {
     this._active_camera = e;
   }
   draw() {
-    if (C(), console.log("Draw"), !this._active_camera || !d.shader)
+    if (C(), !this._active_camera || !d.shader)
       return;
     d.shader.use();
     const e = v();
@@ -401,7 +401,7 @@ export {
   te as Camera,
   P as Component,
   M as ECS,
-  L as Entity,
+  D as Entity,
   J as InputManager,
   Z as Scene,
   j as Shader,
