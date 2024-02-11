@@ -57,6 +57,7 @@ declare class Mouse {
     constructor();
     clear_delta(): void;
     get delta(): Vector2;
+    get position(): Vector2;
 }
 
 export declare class Scene {

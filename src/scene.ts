@@ -23,6 +23,8 @@ export default class Scene {
     draw() {
         clear();
 
+        this.input.mouse.clear_delta();
+
         if (!this._active_camera || !Sprite.shader) {
             return;
         }
