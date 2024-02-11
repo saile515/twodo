@@ -4,10 +4,12 @@ import Transform from "./components/transform.ts";
 import { CameraBundle } from "./components/camera.ts";
 import { init_webgl, clear } from "./graphics/webgl.ts";
 import { mat3 } from "gl-matrix";
+import InputManager from "./input/input_manager.ts";
 
 export default class Scene {
     private _active_camera: CameraBundle | null = null;
 
+    readonly input = new InputManager();
     readonly ecs = new ECS();
 
     constructor(canvas: HTMLCanvasElement) {
