@@ -140,6 +140,7 @@ export declare class Vector2 {
     get x(): number;
     get y(): number;
     clip_space_to_world_space(scene: Scene): Vector2;
+    is_within(a: Vector2, b: Vector2): boolean;
     static sub(a: Vector2, b: Vector2): Vector2;
     static add(a: Vector2, b: Vector2): Vector2;
 }

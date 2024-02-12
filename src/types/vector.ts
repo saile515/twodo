@@ -41,6 +41,14 @@ export class Vector2 {
         return new Vector2(world_space[0], world_space[1]);
     }
 
+    is_within(a: Vector2, b: Vector2) {
+        if (a.x <= this._x && b.x >= this._x && a.y <= this._y && b.y >= this._y) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     static sub(a: Vector2, b: Vector2) {
         return new Vector2(a.x - b.x, a.y - b.y);
     }

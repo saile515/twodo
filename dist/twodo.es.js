@@ -212,20 +212,20 @@ function x() {
   return E != Float32Array && (r[1] = 0, r[2] = 0, r[3] = 0, r[5] = 0, r[6] = 0, r[7] = 0), r[0] = 1, r[4] = 1, r[8] = 1, r;
 }
 function P(r, e) {
-  var t = e[0], i = e[1], a = e[2], _ = e[3], o = e[4], n = e[5], l = e[6], g = e[7], f = e[8], u = f * o - n * g, c = -f * _ + n * l, h = g * _ - o * l, m = t * u + i * c + a * h;
-  return m ? (m = 1 / m, r[0] = u * m, r[1] = (-f * i + a * g) * m, r[2] = (n * i - a * o) * m, r[3] = c * m, r[4] = (f * t - a * l) * m, r[5] = (-n * t + a * _) * m, r[6] = h * m, r[7] = (-g * t + i * l) * m, r[8] = (o * t - i * _) * m, r) : null;
+  var t = e[0], i = e[1], a = e[2], _ = e[3], o = e[4], n = e[5], l = e[6], g = e[7], f = e[8], d = f * o - n * g, c = -f * _ + n * l, h = g * _ - o * l, m = t * d + i * c + a * h;
+  return m ? (m = 1 / m, r[0] = d * m, r[1] = (-f * i + a * g) * m, r[2] = (n * i - a * o) * m, r[3] = c * m, r[4] = (f * t - a * l) * m, r[5] = (-n * t + a * _) * m, r[6] = h * m, r[7] = (-g * t + i * l) * m, r[8] = (o * t - i * _) * m, r) : null;
 }
 function I(r, e, t) {
-  var i = e[0], a = e[1], _ = e[2], o = e[3], n = e[4], l = e[5], g = e[6], f = e[7], u = e[8], c = t[0], h = t[1], m = t[2], T = t[3], b = t[4], y = t[5], w = t[6], A = t[7], R = t[8];
-  return r[0] = c * i + h * o + m * g, r[1] = c * a + h * n + m * f, r[2] = c * _ + h * l + m * u, r[3] = T * i + b * o + y * g, r[4] = T * a + b * n + y * f, r[5] = T * _ + b * l + y * u, r[6] = w * i + A * o + R * g, r[7] = w * a + A * n + R * f, r[8] = w * _ + A * l + R * u, r;
+  var i = e[0], a = e[1], _ = e[2], o = e[3], n = e[4], l = e[5], g = e[6], f = e[7], d = e[8], c = t[0], h = t[1], m = t[2], T = t[3], y = t[4], b = t[5], w = t[6], A = t[7], R = t[8];
+  return r[0] = c * i + h * o + m * g, r[1] = c * a + h * n + m * f, r[2] = c * _ + h * l + m * d, r[3] = T * i + y * o + b * g, r[4] = T * a + y * n + b * f, r[5] = T * _ + y * l + b * d, r[6] = w * i + A * o + R * g, r[7] = w * a + A * n + R * f, r[8] = w * _ + A * l + R * d, r;
 }
 function W(r, e, t) {
-  var i = e[0], a = e[1], _ = e[2], o = e[3], n = e[4], l = e[5], g = e[6], f = e[7], u = e[8], c = t[0], h = t[1];
-  return r[0] = i, r[1] = a, r[2] = _, r[3] = o, r[4] = n, r[5] = l, r[6] = c * i + h * o + g, r[7] = c * a + h * n + f, r[8] = c * _ + h * l + u, r;
+  var i = e[0], a = e[1], _ = e[2], o = e[3], n = e[4], l = e[5], g = e[6], f = e[7], d = e[8], c = t[0], h = t[1];
+  return r[0] = i, r[1] = a, r[2] = _, r[3] = o, r[4] = n, r[5] = l, r[6] = c * i + h * o + g, r[7] = c * a + h * n + f, r[8] = c * _ + h * l + d, r;
 }
 function V(r, e, t) {
-  var i = e[0], a = e[1], _ = e[2], o = e[3], n = e[4], l = e[5], g = e[6], f = e[7], u = e[8], c = Math.sin(t), h = Math.cos(t);
-  return r[0] = h * i + c * o, r[1] = h * a + c * n, r[2] = h * _ + c * l, r[3] = h * o - c * i, r[4] = h * n - c * a, r[5] = h * l - c * _, r[6] = g, r[7] = f, r[8] = u, r;
+  var i = e[0], a = e[1], _ = e[2], o = e[3], n = e[4], l = e[5], g = e[6], f = e[7], d = e[8], c = Math.sin(t), h = Math.cos(t);
+  return r[0] = h * i + c * o, r[1] = h * a + c * n, r[2] = h * _ + c * l, r[3] = h * o - c * i, r[4] = h * n - c * a, r[5] = h * l - c * _, r[6] = g, r[7] = f, r[8] = d, r;
 }
 function L(r, e, t) {
   var i = t[0], a = t[1];
@@ -258,7 +258,7 @@ function $(r, e, t) {
     return e;
   };
 })();
-class d {
+class u {
   constructor(e, t) {
     s(this, "_x");
     s(this, "_y");
@@ -272,7 +272,7 @@ class d {
   }
   clip_space_to_world_space(e) {
     if (!e.active_camera)
-      return new d(0, 0);
+      return new u(0, 0);
     const [t, i] = e.active_camera, a = x();
     P(a, i.matrix);
     const _ = x();
@@ -280,21 +280,24 @@ class d {
     const o = x();
     P(o, _);
     const n = D(this._x, this._y), l = U();
-    return $(l, n, o), new d(l[0], l[1]);
+    return $(l, n, o), new u(l[0], l[1]);
+  }
+  is_within(e, t) {
+    return e.x <= this._x && t.x >= this._x && e.y <= this._y && t.y >= this._y;
   }
   static sub(e, t) {
-    return new d(e.x - t.x, e.y - t.y);
+    return new u(e.x - t.x, e.y - t.y);
   }
   static add(e, t) {
-    return new d(e.x + t.x, e.y + t.y);
+    return new u(e.x + t.x, e.y + t.y);
   }
 }
 class q extends k {
   constructor() {
     super();
     s(this, "_matrix", x());
-    s(this, "_position", new d(0, 0));
-    s(this, "_scale", new d(1, 1));
+    s(this, "_position", new u(0, 0));
+    s(this, "_scale", new u(1, 1));
     s(this, "_rotation", 0);
     s(this, "_depth", 0);
   }
@@ -331,7 +334,7 @@ class q extends k {
 }
 class J {
   constructor() {
-    s(this, "_position", new d(0, 0));
+    s(this, "_position", new u(0, 0));
     s(this, "_last_position", null);
     s(this, "_callbacks", {
       left_click: [],
@@ -339,7 +342,7 @@ class J {
       middle_click: []
     });
     window.addEventListener("mousemove", (e) => {
-      this._position = new d(
+      this._position = new u(
         e.offsetX / gl.canvas.width * 2 - 1,
         e.offsetY / gl.canvas.height * 2 - 1
       );
@@ -358,10 +361,10 @@ class J {
     });
   }
   clear_delta() {
-    this._last_position = new d(this._position.x, this._position.y);
+    this._last_position = new u(this._position.x, this._position.y);
   }
   get delta() {
-    return d.sub(this._position, this._last_position || this._position);
+    return u.sub(this._position, this._last_position || this._position);
   }
   get position() {
     return this._position;
@@ -458,5 +461,5 @@ export {
   p as Sprite,
   C as Texture,
   q as Transform,
-  d as Vector2
+  u as Vector2
 };
