@@ -16,8 +16,12 @@ export default class Scene {
         init_webgl(canvas);
     }
 
-    set_active_camera(camera: CameraBundle) {
+    set active_camera(camera: CameraBundle) {
         this._active_camera = camera;
+    }
+
+    get active_camera(): CameraBundle | null {
+        return this._active_camera;
     }
 
     draw() {
@@ -41,6 +45,10 @@ export default class Scene {
         Sprite.shader.set_uniform_matrix("vp_matrix", vp_matrix as Float32Array, 3);
 
         this.ecs.query<[Sprite, Transform]>([Sprite, Transform]).forEach(([sprite, transform]) => {
+            if (sprite.hidden) {
+                return;
+            }
+
             Sprite.shader!.set_uniform_matrix("model_matrix", transform.matrix as Float32Array, 3);
             Sprite.shader!.set_uniform_float("depth", [transform.depth], 1);
             sprite.draw();
