@@ -13,6 +13,7 @@ export default class Sprite extends Component {
     private _texture: Texture;
     private _failed = false;
     private _texture_ready: boolean = false;
+    hidden = false;
 
     constructor(image_source: string) {
         super();
