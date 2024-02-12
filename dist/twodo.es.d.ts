@@ -19,6 +19,8 @@ export declare class Buffer {
     bind(): void;
 }
 
+export declare type Callback = (...args: any[]) => any;
+
 export declare class Camera extends Component {
     private _projection_matrix;
     constructor(viewport_width: number, viewport_height: number);
@@ -54,10 +56,13 @@ export declare class InputManager {
 declare class Mouse {
     private _position;
     private _last_position;
+    private _callbacks;
     constructor();
     clear_delta(): void;
     get delta(): Vector2;
     get position(): Vector2;
+    register_callback(type: "left_click" | "right_click" | "middle_click", callback: Callback): Callback;
+    unregister_callback(callback: Callback): void;
 }
 
 export declare class Scene {
@@ -65,7 +70,8 @@ export declare class Scene {
     readonly input: InputManager;
     readonly ecs: ECS;
     constructor(canvas: HTMLCanvasElement);
-    set_active_camera(camera: CameraBundle): void;
+    set active_camera(camera: CameraBundle);
+    get active_camera(): CameraBundle | null;
     draw(): void;
 }
 
@@ -91,6 +97,7 @@ export declare class Sprite extends Component {
     private _texture;
     private _failed;
     private _texture_ready;
+    hidden: boolean;
     constructor(image_source: string);
     draw(): void;
     get failed(): boolean;
@@ -132,6 +139,7 @@ export declare class Vector2 {
     constructor(x: number, y: number);
     get x(): number;
     get y(): number;
+    clip_space_to_world_space(scene: Scene): Vector2;
     static sub(a: Vector2, b: Vector2): Vector2;
     static add(a: Vector2, b: Vector2): Vector2;
 }

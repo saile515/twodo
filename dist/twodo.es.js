@@ -1,44 +1,44 @@
-var U = Object.defineProperty;
-var L = (t, e, r) => e in t ? U(t, e, { enumerable: !0, configurable: !0, writable: !0, value: r }) : t[e] = r;
-var a = (t, e, r) => (L(t, typeof e != "symbol" ? e + "" : e, r), r);
-class D {
+var M = Object.defineProperty;
+var F = (r, e, t) => e in r ? M(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
+var s = (r, e, t) => (F(r, typeof e != "symbol" ? e + "" : e, t), t);
+class j {
   constructor() {
-    a(this, "id", crypto.randomUUID());
+    s(this, "id", crypto.randomUUID());
   }
 }
-class M {
+class B {
   constructor() {
-    a(this, "_entities", []);
-    a(this, "_components", {});
+    s(this, "_entities", []);
+    s(this, "_components", {});
   }
   add_component(e) {
-    const r = e.constructor.name;
-    this._components[r] || (this._components[r] = []), this._components[r].push(e);
+    const t = e.constructor.name;
+    this._components[t] || (this._components[t] = []), this._components[t].push(e);
   }
   create_entity(e) {
-    const r = new D();
+    const t = new j();
     return e.forEach((i) => {
-      i.set_parent(r), this.add_component(i);
-    }), this._entities.push(r), e;
+      i.set_parent(t), this.add_component(i);
+    }), this._entities.push(t), e;
   }
   query(e) {
-    const r = {};
+    const t = {};
     this._components[e[0].name].forEach((i) => {
-      r[i.parent.id] = [i];
+      t[i.parent.id] = [i];
     });
     for (let i of e) {
-      let n = i.name;
-      n != e[0].name && this._components[n].forEach((_) => {
-        const o = r[_.parent.id];
+      let a = i.name;
+      a != e[0].name && this._components[a].forEach((_) => {
+        const o = t[_.parent.id];
         o && o.push(_);
       });
     }
-    return Object.values(r).filter((i) => i.length == e.length);
+    return Object.values(t).filter((i) => i.length == e.length);
   }
 }
-class P {
+class k {
   constructor() {
-    a(this, "_parent", null);
+    s(this, "_parent", null);
   }
   // Can only be called once. Should not be called unless component exists outside an ECS.
   set_parent(e) {
@@ -48,11 +48,11 @@ class P {
     return this._parent;
   }
 }
-class F {
+class C {
   constructor(e) {
-    a(this, "_texture");
-    a(this, "_image", new Image());
-    a(this, "_errored", !1);
+    s(this, "_texture");
+    s(this, "_image", new Image());
+    s(this, "_errored", !1);
     this._image.src = e, this._texture = gl.createTexture(), this._image.addEventListener("onerror", () => this._errored = !0);
   }
   handle_loaded_image() {
@@ -69,77 +69,77 @@ class F {
     gl.activeTexture(gl.TEXTURE0), gl.bindTexture(gl.TEXTURE_2D, this._texture);
   }
 }
-class j {
-  constructor(e, r, i, n) {
-    a(this, "_vertex");
-    a(this, "_fragment");
-    a(this, "_attribute_keys");
-    a(this, "_uniform_keys");
-    a(this, "_program");
-    a(this, "_attributes", {});
-    a(this, "_uniforms", {});
-    this._vertex = e, this._fragment = r, this._attribute_keys = i, this._uniform_keys = n, this._program = gl.createProgram();
+class X {
+  constructor(e, t, i, a) {
+    s(this, "_vertex");
+    s(this, "_fragment");
+    s(this, "_attribute_keys");
+    s(this, "_uniform_keys");
+    s(this, "_program");
+    s(this, "_attributes", {});
+    s(this, "_uniforms", {});
+    this._vertex = e, this._fragment = t, this._attribute_keys = i, this._uniform_keys = a, this._program = gl.createProgram();
   }
   async compile() {
     const e = gl.createShader(gl.VERTEX_SHADER);
     if (gl.shaderSource(e, this._vertex), gl.compileShader(e), !gl.getShaderParameter(e, gl.COMPILE_STATUS))
       throw console.error(gl.getShaderInfoLog(e)), gl.deleteShader(e), Error("Vertex shader failed to compile.");
-    const r = gl.createShader(gl.FRAGMENT_SHADER);
-    if (gl.shaderSource(r, this._fragment), gl.compileShader(r), !gl.getShaderParameter(r, gl.COMPILE_STATUS))
-      throw console.error(gl.getShaderInfoLog(r)), gl.deleteShader(r), Error("Fragment shader failed to compile.");
-    if (gl.attachShader(this._program, e), gl.attachShader(this._program, r), gl.linkProgram(this._program), !gl.getProgramParameter(this._program, gl.LINK_STATUS))
+    const t = gl.createShader(gl.FRAGMENT_SHADER);
+    if (gl.shaderSource(t, this._fragment), gl.compileShader(t), !gl.getShaderParameter(t, gl.COMPILE_STATUS))
+      throw console.error(gl.getShaderInfoLog(t)), gl.deleteShader(t), Error("Fragment shader failed to compile.");
+    if (gl.attachShader(this._program, e), gl.attachShader(this._program, t), gl.linkProgram(this._program), !gl.getProgramParameter(this._program, gl.LINK_STATUS))
       throw Error("Shader program failed to link.");
     this._attribute_keys.forEach((i) => {
       this._attributes[i] = gl.getAttribLocation(this._program, i);
     }), this._uniform_keys.forEach((i) => {
-      let n = gl.getUniformLocation(this._program, i);
-      n && (this._uniforms[i] = n);
+      let a = gl.getUniformLocation(this._program, i);
+      a && (this._uniforms[i] = a);
     });
   }
   use() {
     gl.useProgram(this._program);
   }
-  set_attribute(e, r) {
-    r.bind(), gl.vertexAttribPointer(this._attributes[e], r.components, gl.FLOAT, !1, 0, 0), gl.enableVertexAttribArray(this._attributes[e]);
+  set_attribute(e, t) {
+    t.bind(), gl.vertexAttribPointer(this._attributes[e], t.components, gl.FLOAT, !1, 0, 0), gl.enableVertexAttribArray(this._attributes[e]);
   }
   // Components should be integer betweeen 1 and 4
-  set_uniform_float(e, r, i) {
-    gl["uniform" + i + "f"](this._uniforms[e], ...r);
+  set_uniform_float(e, t, i) {
+    gl["uniform" + i + "f"](this._uniforms[e], ...t);
   }
   // Components should be integer betweeen 1 and 4
-  set_uniform_int(e, r, i) {
-    gl["uniform" + i + "i"](this._uniforms[e], ...r);
+  set_uniform_int(e, t, i) {
+    gl["uniform" + i + "i"](this._uniforms[e], ...t);
   }
   // Components should be integer betweeen 1 and 4
-  set_uniform_vector(e, r, i) {
-    gl["uniform" + i + "fv"](this._uniforms[e], r);
+  set_uniform_vector(e, t, i) {
+    gl["uniform" + i + "fv"](this._uniforms[e], t);
   }
   // Components should be integer between 2 and 4, matrix of n*n size
-  set_uniform_matrix(e, r, i) {
+  set_uniform_matrix(e, t, i) {
     gl["uniformMatrix" + i + "fv"](
       this._uniforms[e],
       !1,
-      r
+      t
     );
   }
 }
-function B(t) {
-  const e = t.getBoundingClientRect();
-  t.width = e.width, t.height = e.height;
-  const r = t.getContext("webgl2");
-  if (!r)
+function N(r) {
+  const e = r.getBoundingClientRect();
+  r.width = e.width, r.height = e.height;
+  const t = r.getContext("webgl2");
+  if (!t)
     return alert("This browser does not support WebGL2."), 1;
-  r.enable(r.BLEND), r.blendFunc(r.SRC_ALPHA, r.ONE_MINUS_SRC_ALPHA), r.clearColor(0, 0, 0, 1);
+  t.enable(t.BLEND), t.blendFunc(t.SRC_ALPHA, t.ONE_MINUS_SRC_ALPHA), t.clearColor(0, 0, 0, 1);
   const i = globalThis || window;
-  i.gl = r;
+  i.gl = t;
 }
-function C() {
+function G() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 }
-function X() {
+function O() {
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
-const N = `#version 300 es
+const H = `#version 300 es
 
 uniform highp mat3 vp_matrix;
 uniform highp mat3 model_matrix;
@@ -155,7 +155,7 @@ void main(void) {
     gl_Position = vec4((vp_matrix * model_matrix * vec3(vertex_position, 1.0)).xy, depth, 1.0);
     texture_position = vertex_position + vec2(0.5);
 }
-`, G = `#version 300 es
+`, Y = `#version 300 es
 
 in highp vec2 texture_position;
 uniform sampler2D sampler;
@@ -166,45 +166,103 @@ void main(void) {
     frag_color = texture(sampler, texture_position);
 }
 `;
-let x, w = !1;
-class d extends P {
-  constructor(r) {
+let v, S = !1;
+class p extends k {
+  constructor(t) {
     super();
-    a(this, "_texture");
-    a(this, "_failed", !1);
-    a(this, "_texture_ready", !1);
-    this._texture = new F(r), this._texture.init().then(() => {
+    s(this, "_texture");
+    s(this, "_failed", !1);
+    s(this, "_texture_ready", !1);
+    s(this, "hidden", !1);
+    this._texture = new C(t), this._texture.init().then(() => {
       this._texture_ready = !0;
     }).catch(() => {
       this._failed = !0;
     });
   }
   draw() {
-    !this._texture_ready || !d.shader || (this._texture.use(), d.shader.set_uniform_int("sampler", [0], 1), X());
+    !this._texture_ready || !p.shader || (this._texture.use(), p.shader.set_uniform_int("sampler", [0], 1), O());
   }
   get failed() {
     return this._failed;
   }
   static get shader() {
     if (gl) {
-      if (x && w)
-        return x;
-      x && !w || (x = new j(
-        N,
-        G,
+      if (v && S)
+        return v;
+      v && !S || (v = new X(
+        H,
+        Y,
         [],
         ["sampler", "vp_matrix", "model_matrix", "depth"]
-      ), x.compile().then(() => {
-        w = !0;
+      ), v.compile().then(() => {
+        S = !0;
       }));
     }
   }
 }
-class p {
-  constructor(e, r) {
-    a(this, "_x");
-    a(this, "_y");
-    this._x = e, this._y = r;
+var E = typeof Float32Array < "u" ? Float32Array : Array;
+Math.hypot || (Math.hypot = function() {
+  for (var r = 0, e = arguments.length; e--; )
+    r += arguments[e] * arguments[e];
+  return Math.sqrt(r);
+});
+function x() {
+  var r = new E(9);
+  return E != Float32Array && (r[1] = 0, r[2] = 0, r[3] = 0, r[5] = 0, r[6] = 0, r[7] = 0), r[0] = 1, r[4] = 1, r[8] = 1, r;
+}
+function P(r, e) {
+  var t = e[0], i = e[1], a = e[2], _ = e[3], o = e[4], n = e[5], l = e[6], g = e[7], f = e[8], u = f * o - n * g, c = -f * _ + n * l, h = g * _ - o * l, m = t * u + i * c + a * h;
+  return m ? (m = 1 / m, r[0] = u * m, r[1] = (-f * i + a * g) * m, r[2] = (n * i - a * o) * m, r[3] = c * m, r[4] = (f * t - a * l) * m, r[5] = (-n * t + a * _) * m, r[6] = h * m, r[7] = (-g * t + i * l) * m, r[8] = (o * t - i * _) * m, r) : null;
+}
+function I(r, e, t) {
+  var i = e[0], a = e[1], _ = e[2], o = e[3], n = e[4], l = e[5], g = e[6], f = e[7], u = e[8], c = t[0], h = t[1], m = t[2], T = t[3], b = t[4], y = t[5], w = t[6], A = t[7], R = t[8];
+  return r[0] = c * i + h * o + m * g, r[1] = c * a + h * n + m * f, r[2] = c * _ + h * l + m * u, r[3] = T * i + b * o + y * g, r[4] = T * a + b * n + y * f, r[5] = T * _ + b * l + y * u, r[6] = w * i + A * o + R * g, r[7] = w * a + A * n + R * f, r[8] = w * _ + A * l + R * u, r;
+}
+function W(r, e, t) {
+  var i = e[0], a = e[1], _ = e[2], o = e[3], n = e[4], l = e[5], g = e[6], f = e[7], u = e[8], c = t[0], h = t[1];
+  return r[0] = i, r[1] = a, r[2] = _, r[3] = o, r[4] = n, r[5] = l, r[6] = c * i + h * o + g, r[7] = c * a + h * n + f, r[8] = c * _ + h * l + u, r;
+}
+function V(r, e, t) {
+  var i = e[0], a = e[1], _ = e[2], o = e[3], n = e[4], l = e[5], g = e[6], f = e[7], u = e[8], c = Math.sin(t), h = Math.cos(t);
+  return r[0] = h * i + c * o, r[1] = h * a + c * n, r[2] = h * _ + c * l, r[3] = h * o - c * i, r[4] = h * n - c * a, r[5] = h * l - c * _, r[6] = g, r[7] = f, r[8] = u, r;
+}
+function L(r, e, t) {
+  var i = t[0], a = t[1];
+  return r[0] = i * e[0], r[1] = i * e[1], r[2] = i * e[2], r[3] = a * e[3], r[4] = a * e[4], r[5] = a * e[5], r[6] = e[6], r[7] = e[7], r[8] = e[8], r;
+}
+function z(r, e) {
+  return r[0] = 1, r[1] = 0, r[2] = 0, r[3] = 0, r[4] = 1, r[5] = 0, r[6] = e[0], r[7] = e[1], r[8] = 1, r;
+}
+function K(r, e, t) {
+  return r[0] = 2 / e, r[1] = 0, r[2] = 0, r[3] = 0, r[4] = -2 / t, r[5] = 0, r[6] = -1, r[7] = 1, r[8] = 1, r;
+}
+function U() {
+  var r = new E(2);
+  return E != Float32Array && (r[0] = 0, r[1] = 0), r;
+}
+function D(r, e) {
+  var t = new E(2);
+  return t[0] = r, t[1] = e, t;
+}
+function $(r, e, t) {
+  var i = e[0], a = e[1];
+  return r[0] = t[0] * i + t[3] * a + t[6], r[1] = t[1] * i + t[4] * a + t[7], r;
+}
+(function() {
+  var r = U();
+  return function(e, t, i, a, _, o) {
+    var n, l;
+    for (t || (t = 2), i || (i = 0), a ? l = Math.min(a * t + i, e.length) : l = e.length, n = i; n < l; n += t)
+      r[0] = e[n], r[1] = e[n + 1], _(r, r, o), e[n] = r[0], e[n + 1] = r[1];
+    return e;
+  };
+})();
+class d {
+  constructor(e, t) {
+    s(this, "_x");
+    s(this, "_y");
+    this._x = e, this._y = t;
   }
   get x() {
     return this._x;
@@ -212,89 +270,48 @@ class p {
   get y() {
     return this._y;
   }
-  static sub(e, r) {
-    return new p(e.x - r.x, e.y - r.y);
+  clip_space_to_world_space(e) {
+    if (!e.active_camera)
+      return new d(0, 0);
+    const [t, i] = e.active_camera, a = x();
+    P(a, i.matrix);
+    const _ = x();
+    I(_, t.projection_matrix, a);
+    const o = x();
+    P(o, _);
+    const n = D(this._x, this._y), l = U();
+    return $(l, n, o), new d(l[0], l[1]);
   }
-  static add(e, r) {
-    return new p(e.x + r.x, e.y + r.y);
+  static sub(e, t) {
+    return new d(e.x - t.x, e.y - t.y);
+  }
+  static add(e, t) {
+    return new d(e.x + t.x, e.y + t.y);
   }
 }
-var v = typeof Float32Array < "u" ? Float32Array : Array;
-Math.hypot || (Math.hypot = function() {
-  for (var t = 0, e = arguments.length; e--; )
-    t += arguments[e] * arguments[e];
-  return Math.sqrt(t);
-});
-function E() {
-  var t = new v(9);
-  return v != Float32Array && (t[1] = 0, t[2] = 0, t[3] = 0, t[5] = 0, t[6] = 0, t[7] = 0), t[0] = 1, t[4] = 1, t[8] = 1, t;
-}
-function O(t, e) {
-  var r = e[0], i = e[1], n = e[2], _ = e[3], o = e[4], s = e[5], l = e[6], m = e[7], f = e[8], u = f * o - s * m, h = -f * _ + s * l, c = m * _ - o * l, g = r * u + i * h + n * c;
-  return g ? (g = 1 / g, t[0] = u * g, t[1] = (-f * i + n * m) * g, t[2] = (s * i - n * o) * g, t[3] = h * g, t[4] = (f * r - n * l) * g, t[5] = (-s * r + n * _) * g, t[6] = c * g, t[7] = (-m * r + i * l) * g, t[8] = (o * r - i * _) * g, t) : null;
-}
-function k(t, e, r) {
-  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], m = e[6], f = e[7], u = e[8], h = r[0], c = r[1], g = r[2], T = r[3], y = r[4], A = r[5], R = r[6], b = r[7], S = r[8];
-  return t[0] = h * i + c * o + g * m, t[1] = h * n + c * s + g * f, t[2] = h * _ + c * l + g * u, t[3] = T * i + y * o + A * m, t[4] = T * n + y * s + A * f, t[5] = T * _ + y * l + A * u, t[6] = R * i + b * o + S * m, t[7] = R * n + b * s + S * f, t[8] = R * _ + b * l + S * u, t;
-}
-function H(t, e, r) {
-  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], m = e[6], f = e[7], u = e[8], h = r[0], c = r[1];
-  return t[0] = i, t[1] = n, t[2] = _, t[3] = o, t[4] = s, t[5] = l, t[6] = h * i + c * o + m, t[7] = h * n + c * s + f, t[8] = h * _ + c * l + u, t;
-}
-function V(t, e, r) {
-  var i = e[0], n = e[1], _ = e[2], o = e[3], s = e[4], l = e[5], m = e[6], f = e[7], u = e[8], h = Math.sin(r), c = Math.cos(r);
-  return t[0] = c * i + h * o, t[1] = c * n + h * s, t[2] = c * _ + h * l, t[3] = c * o - h * i, t[4] = c * s - h * n, t[5] = c * l - h * _, t[6] = m, t[7] = f, t[8] = u, t;
-}
-function I(t, e, r) {
-  var i = r[0], n = r[1];
-  return t[0] = i * e[0], t[1] = i * e[1], t[2] = i * e[2], t[3] = n * e[3], t[4] = n * e[4], t[5] = n * e[5], t[6] = e[6], t[7] = e[7], t[8] = e[8], t;
-}
-function Y(t, e) {
-  return t[0] = 1, t[1] = 0, t[2] = 0, t[3] = 0, t[4] = 1, t[5] = 0, t[6] = e[0], t[7] = e[1], t[8] = 1, t;
-}
-function W(t, e, r) {
-  return t[0] = 2 / e, t[1] = 0, t[2] = 0, t[3] = 0, t[4] = -2 / r, t[5] = 0, t[6] = -1, t[7] = 1, t[8] = 1, t;
-}
-function z() {
-  var t = new v(2);
-  return v != Float32Array && (t[0] = 0, t[1] = 0), t;
-}
-function K(t, e) {
-  var r = new v(2);
-  return r[0] = t, r[1] = e, r;
-}
-(function() {
-  var t = z();
-  return function(e, r, i, n, _, o) {
-    var s, l;
-    for (r || (r = 2), i || (i = 0), n ? l = Math.min(n * r + i, e.length) : l = e.length, s = i; s < l; s += r)
-      t[0] = e[s], t[1] = e[s + 1], _(t, t, o), e[s] = t[0], e[s + 1] = t[1];
-    return e;
-  };
-})();
-class $ extends P {
+class q extends k {
   constructor() {
     super();
-    a(this, "_matrix", E());
-    a(this, "_position", new p(0, 0));
-    a(this, "_scale", new p(1, 1));
-    a(this, "_rotation", 0);
-    a(this, "_depth", 0);
+    s(this, "_matrix", x());
+    s(this, "_position", new d(0, 0));
+    s(this, "_scale", new d(1, 1));
+    s(this, "_rotation", 0);
+    s(this, "_depth", 0);
   }
   calculate_matrix() {
-    Y(this._matrix, [this._position.x, this._position.y]), V(this._matrix, this._matrix, this._rotation * Math.PI / 180), I(this._matrix, this._matrix, [this._scale.x, this._scale.y]);
+    z(this._matrix, [this._position.x, this._position.y]), V(this._matrix, this._matrix, this._rotation * Math.PI / 180), L(this._matrix, this._matrix, [this._scale.x, this._scale.y]);
   }
-  set position(r) {
-    this._position = r, this.calculate_matrix();
+  set position(t) {
+    this._position = t, this.calculate_matrix();
   }
-  set scale(r) {
-    this._scale = r, this.calculate_matrix();
+  set scale(t) {
+    this._scale = t, this.calculate_matrix();
   }
-  set rotation(r) {
-    this._rotation = r, this.calculate_matrix();
+  set rotation(t) {
+    this._rotation = t, this.calculate_matrix();
   }
-  set depth(r) {
-    this._depth = r;
+  set depth(t) {
+    this._depth = t;
   }
   get position() {
     return this._position;
@@ -312,67 +329,94 @@ class $ extends P {
     return this._matrix;
   }
 }
-class q {
+class J {
   constructor() {
-    a(this, "_position", new p(0, 0));
-    a(this, "_last_position", null);
+    s(this, "_position", new d(0, 0));
+    s(this, "_last_position", null);
+    s(this, "_callbacks", {
+      left_click: [],
+      right_click: [],
+      middle_click: []
+    });
     window.addEventListener("mousemove", (e) => {
-      this._position = new p(
+      this._position = new d(
         e.offsetX / gl.canvas.width * 2 - 1,
         e.offsetY / gl.canvas.height * 2 - 1
       );
+    }), window.addEventListener("click", (e) => {
+      switch (e.button) {
+        case 0:
+          this._callbacks.left_click.forEach((t) => t());
+          break;
+        case 1:
+          this._callbacks.right_click.forEach((t) => t());
+          break;
+        case 2:
+          this._callbacks.middle_click.forEach((t) => t());
+          break;
+      }
     });
   }
   clear_delta() {
-    this._last_position = new p(this._position.x, this._position.y);
+    this._last_position = new d(this._position.x, this._position.y);
   }
   get delta() {
-    return p.sub(this._position, this._last_position || this._position);
+    return d.sub(this._position, this._last_position || this._position);
   }
   get position() {
     return this._position;
   }
+  register_callback(e, t) {
+    return this._callbacks[e].push(t), t;
+  }
+  unregister_callback(e) {
+    for (let t in this._callbacks)
+      this._callbacks[t] = this._callbacks[t].filter((i) => i != e);
+  }
 }
-class J {
+class Q {
   constructor() {
-    a(this, "_mouse", new q());
+    s(this, "_mouse", new J());
   }
   get mouse() {
     return this._mouse;
   }
 }
-class Z {
+class ee {
   constructor(e) {
-    a(this, "_active_camera", null);
-    a(this, "input", new J());
-    a(this, "ecs", new M());
-    B(e);
+    s(this, "_active_camera", null);
+    s(this, "input", new Q());
+    s(this, "ecs", new B());
+    N(e);
   }
-  set_active_camera(e) {
+  set active_camera(e) {
     this._active_camera = e;
   }
+  get active_camera() {
+    return this._active_camera;
+  }
   draw() {
-    if (C(), this.input.mouse.clear_delta(), !this._active_camera || !d.shader)
+    if (G(), this.input.mouse.clear_delta(), !this._active_camera || !p.shader)
       return;
-    d.shader.use();
-    const e = E();
-    O(e, this._active_camera[1].matrix);
-    const r = E();
-    k(r, this._active_camera[0].projection_matrix, e), d.shader.set_uniform_matrix("vp_matrix", r, 3), this.ecs.query([d, $]).forEach(([i, n]) => {
-      d.shader.set_uniform_matrix("model_matrix", n.matrix, 3), d.shader.set_uniform_float("depth", [n.depth], 1), i.draw();
+    p.shader.use();
+    const e = x();
+    P(e, this._active_camera[1].matrix);
+    const t = x();
+    I(t, this._active_camera[0].projection_matrix, e), p.shader.set_uniform_matrix("vp_matrix", t, 3), this.ecs.query([p, q]).forEach(([i, a]) => {
+      i.hidden || (p.shader.set_uniform_matrix("model_matrix", a.matrix, 3), p.shader.set_uniform_float("depth", [a.depth], 1), i.draw());
     });
   }
 }
-class ee {
+class te {
   constructor(e = {
     target: gl.ARRAY_BUFFER,
     usage: gl.STATIC_DRAW,
     components: 2
   }) {
-    a(this, "_buffer");
-    a(this, "_target");
-    a(this, "_usage");
-    a(this, "components");
+    s(this, "_buffer");
+    s(this, "_target");
+    s(this, "_usage");
+    s(this, "components");
     this._target = e.target, this._usage = e.usage, this.components = e.components, this._buffer = gl.createBuffer();
   }
   set(e) {
@@ -385,17 +429,17 @@ class ee {
     gl.bindBuffer(this._target, this._buffer);
   }
 }
-class te extends P {
-  constructor(r, i) {
+class re extends k {
+  constructor(t, i) {
     super();
-    a(this, "_projection_matrix", E());
-    this.calculate_projection_matrix(r, i);
+    s(this, "_projection_matrix", x());
+    this.calculate_projection_matrix(t, i);
   }
-  calculate_projection_matrix(r, i) {
-    W(this._projection_matrix, r, i), H(this._projection_matrix, this._projection_matrix, [r / 2, i / 2]), I(
+  calculate_projection_matrix(t, i) {
+    K(this._projection_matrix, t, i), W(this._projection_matrix, this._projection_matrix, [t / 2, i / 2]), L(
       this._projection_matrix,
       this._projection_matrix,
-      K(r / 25, r / 25)
+      D(t / 25, t / 25)
     );
   }
   get projection_matrix() {
@@ -403,16 +447,16 @@ class te extends P {
   }
 }
 export {
-  ee as Buffer,
-  te as Camera,
-  P as Component,
-  M as ECS,
-  D as Entity,
-  J as InputManager,
-  Z as Scene,
-  j as Shader,
-  d as Sprite,
-  F as Texture,
-  $ as Transform,
-  p as Vector2
+  te as Buffer,
+  re as Camera,
+  k as Component,
+  B as ECS,
+  j as Entity,
+  Q as InputManager,
+  ee as Scene,
+  X as Shader,
+  p as Sprite,
+  C as Texture,
+  q as Transform,
+  d as Vector2
 };

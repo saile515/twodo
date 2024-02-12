@@ -1,6 +1,6 @@
 import Component from "./component.ts";
 import Entity from "./entity.ts";
-import type { ArrayElement } from "../types/array_element.ts";
+import type { ArrayElement } from "../types/util.ts";
 
 // Entity Component System
 export default class ECS {
