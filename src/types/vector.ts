@@ -38,7 +38,7 @@ export class Vector2 {
         const world_space = vec2.create();
         vec2.transformMat3(world_space, clip_space, inversed);
 
-        return new Vector2(world_space[0], world_space[1]);
+        return new Vector2(world_space[0], -world_space[1]);
     }
 
     is_within(a: Vector2, b: Vector2) {

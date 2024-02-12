@@ -129,7 +129,7 @@ function N(r) {
   const t = r.getContext("webgl2");
   if (!t)
     return alert("This browser does not support WebGL2."), 1;
-  t.enable(t.BLEND), t.blendFunc(t.SRC_ALPHA, t.ONE_MINUS_SRC_ALPHA), t.clearColor(0, 0, 0, 1);
+  t.enable(t.BLEND), t.blendFunc(t.SRC_ALPHA, t.ONE_MINUS_SRC_ALPHA), t.clearColor(0, 0, 0, 1), t.pixelStorei(t.UNPACK_FLIP_Y_WEBGL, !0);
   const i = globalThis || window;
   i.gl = t;
 }
@@ -139,7 +139,7 @@ function G() {
 function O() {
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
-const H = `#version 300 es
+const Y = `#version 300 es
 
 uniform highp mat3 vp_matrix;
 uniform highp mat3 model_matrix;
@@ -155,7 +155,7 @@ void main(void) {
     gl_Position = vec4((vp_matrix * model_matrix * vec3(vertex_position, 1.0)).xy, depth, 1.0);
     texture_position = vertex_position + vec2(0.5);
 }
-`, Y = `#version 300 es
+`, H = `#version 300 es
 
 in highp vec2 texture_position;
 uniform sampler2D sampler;
@@ -191,8 +191,8 @@ class p extends k {
       if (v && S)
         return v;
       v && !S || (v = new X(
-        H,
         Y,
+        H,
         [],
         ["sampler", "vp_matrix", "model_matrix", "depth"]
       ), v.compile().then(() => {
@@ -231,10 +231,10 @@ function L(r, e, t) {
   var i = t[0], a = t[1];
   return r[0] = i * e[0], r[1] = i * e[1], r[2] = i * e[2], r[3] = a * e[3], r[4] = a * e[4], r[5] = a * e[5], r[6] = e[6], r[7] = e[7], r[8] = e[8], r;
 }
-function z(r, e) {
+function K(r, e) {
   return r[0] = 1, r[1] = 0, r[2] = 0, r[3] = 0, r[4] = 1, r[5] = 0, r[6] = e[0], r[7] = e[1], r[8] = 1, r;
 }
-function K(r, e, t) {
+function z(r, e, t) {
   return r[0] = 2 / e, r[1] = 0, r[2] = 0, r[3] = 0, r[4] = -2 / t, r[5] = 0, r[6] = -1, r[7] = 1, r[8] = 1, r;
 }
 function U() {
@@ -280,7 +280,7 @@ class u {
     const o = x();
     P(o, _);
     const n = D(this._x, this._y), l = U();
-    return $(l, n, o), new u(l[0], l[1]);
+    return $(l, n, o), new u(l[0], -l[1]);
   }
   is_within(e, t) {
     return e.x <= this._x && t.x >= this._x && e.y <= this._y && t.y >= this._y;
@@ -302,7 +302,7 @@ class q extends k {
     s(this, "_depth", 0);
   }
   calculate_matrix() {
-    z(this._matrix, [this._position.x, this._position.y]), V(this._matrix, this._matrix, this._rotation * Math.PI / 180), L(this._matrix, this._matrix, [this._scale.x, this._scale.y]);
+    K(this._matrix, [this._position.x, this._position.y]), V(this._matrix, this._matrix, this._rotation * Math.PI / 180), L(this._matrix, this._matrix, [this._scale.x, this._scale.y]);
   }
   set position(t) {
     this._position = t, this.calculate_matrix();
@@ -439,10 +439,10 @@ class re extends k {
     this.calculate_projection_matrix(t, i);
   }
   calculate_projection_matrix(t, i) {
-    K(this._projection_matrix, t, i), W(this._projection_matrix, this._projection_matrix, [t / 2, i / 2]), L(
+    z(this._projection_matrix, t, i), W(this._projection_matrix, this._projection_matrix, [t / 2, i / 2]), L(
       this._projection_matrix,
       this._projection_matrix,
-      D(t / 25, t / 25)
+      D(t / 25, -t / 25)
     );
   }
   get projection_matrix() {

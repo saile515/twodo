@@ -17,7 +17,7 @@ export default class Camera extends Component {
         mat3.scale(
             this._projection_matrix,
             this._projection_matrix,
-            vec2.fromValues(viewport_width / 25, viewport_width / 25),
+            vec2.fromValues(viewport_width / 25, -viewport_width / 25),
         );
     }
 
