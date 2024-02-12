@@ -16,6 +16,7 @@ import Transform from "./components/transform.ts";
 import InputManager from "./input/input_manager.ts";
 
 import { Vector2 } from "./types/vector.ts";
+import type { Callback } from "./types/util.ts";
 
 export {
     Scene,
@@ -31,4 +32,5 @@ export {
     Transform,
     InputManager,
     Vector2,
+    Callback,
 };
