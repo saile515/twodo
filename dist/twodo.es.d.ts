@@ -41,6 +41,7 @@ export declare class ECS {
     private _components;
     private add_component;
     create_entity<T extends Component[]>(components: T): T;
+    delete_entity(entity: Entity): void;
     query<T extends Array<Component>>(query: (new (...arg: any[]) => ArrayElement<T>)[]): T[];
 }
 

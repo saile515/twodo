@@ -30,6 +30,12 @@ export default class ECS {
         return components;
     }
 
+    delete_entity(entity: Entity) {
+        Object.entries(this._components).forEach(([type, components]) => {
+            this._components[type] = components.filter((component) => component.parent != entity);
+        });
+    }
+
     query<T extends Array<Component>>(query: (new (...arg: any[]) => ArrayElement<T>)[]) {
         const components: { [key: string]: Component[] } = {};
 

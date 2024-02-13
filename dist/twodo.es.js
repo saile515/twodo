@@ -21,6 +21,11 @@ class B {
       i.set_parent(t), this.add_component(i);
     }), this._entities.push(t), e;
   }
+  delete_entity(e) {
+    Object.entries(this._components).forEach(([t, i]) => {
+      this._components[t] = i.filter((a) => a.parent != e);
+    });
+  }
   query(e) {
     const t = {};
     this._components[e[0].name].forEach((i) => {
