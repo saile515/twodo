@@ -40,6 +40,18 @@ export default class Sprite extends Component {
         draw();
     }
 
+    set src(src: string) {
+        this._texture = new Texture(src);
+        this._texture
+            .init()
+            .then(() => {
+                this._texture_ready = true;
+            })
+            .catch(() => {
+                this._failed = true;
+            });
+    }
+
     get failed() {
         return this._failed;
     }

@@ -101,6 +101,7 @@ export declare class Sprite extends Component {
     hidden: boolean;
     constructor(image_source: string);
     draw(): void;
+    set src(src: string);
     get failed(): boolean;
     static get shader(): Shader<[], ["sampler", "vp_matrix", "model_matrix", "depth"]> | undefined;
 }

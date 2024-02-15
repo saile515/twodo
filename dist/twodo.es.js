@@ -1,12 +1,12 @@
-var M = Object.defineProperty;
-var F = (r, e, t) => e in r ? M(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
-var s = (r, e, t) => (F(r, typeof e != "symbol" ? e + "" : e, t), t);
-class j {
+var F = Object.defineProperty;
+var j = (r, e, t) => e in r ? F(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
+var s = (r, e, t) => (j(r, typeof e != "symbol" ? e + "" : e, t), t);
+class B {
   constructor() {
     s(this, "id", crypto.randomUUID());
   }
 }
-class B {
+class C {
   constructor() {
     s(this, "_entities", []);
     s(this, "_components", {});
@@ -16,7 +16,7 @@ class B {
     this._components[t] || (this._components[t] = []), this._components[t].push(e);
   }
   create_entity(e) {
-    const t = new j();
+    const t = new B();
     return e.forEach((i) => {
       i.set_parent(t), this.add_component(i);
     }), this._entities.push(t), e;
@@ -53,7 +53,7 @@ class k {
     return this._parent;
   }
 }
-class C {
+class I {
   constructor(e) {
     s(this, "_texture");
     s(this, "_image", new Image());
@@ -179,7 +179,7 @@ class p extends k {
     s(this, "_failed", !1);
     s(this, "_texture_ready", !1);
     s(this, "hidden", !1);
-    this._texture = new C(t), this._texture.init().then(() => {
+    this._texture = new I(t), this._texture.init().then(() => {
       this._texture_ready = !0;
     }).catch(() => {
       this._failed = !0;
@@ -187,6 +187,13 @@ class p extends k {
   }
   draw() {
     !this._texture_ready || !p.shader || (this._texture.use(), p.shader.set_uniform_int("sampler", [0], 1), O());
+  }
+  set src(t) {
+    this._texture = new I(t), this._texture.init().then(() => {
+      this._texture_ready = !0;
+    }).catch(() => {
+      this._failed = !0;
+    });
   }
   get failed() {
     return this._failed;
@@ -220,7 +227,7 @@ function P(r, e) {
   var t = e[0], i = e[1], a = e[2], _ = e[3], o = e[4], n = e[5], l = e[6], g = e[7], f = e[8], d = f * o - n * g, c = -f * _ + n * l, h = g * _ - o * l, m = t * d + i * c + a * h;
   return m ? (m = 1 / m, r[0] = d * m, r[1] = (-f * i + a * g) * m, r[2] = (n * i - a * o) * m, r[3] = c * m, r[4] = (f * t - a * l) * m, r[5] = (-n * t + a * _) * m, r[6] = h * m, r[7] = (-g * t + i * l) * m, r[8] = (o * t - i * _) * m, r) : null;
 }
-function I(r, e, t) {
+function L(r, e, t) {
   var i = e[0], a = e[1], _ = e[2], o = e[3], n = e[4], l = e[5], g = e[6], f = e[7], d = e[8], c = t[0], h = t[1], m = t[2], T = t[3], y = t[4], b = t[5], w = t[6], A = t[7], R = t[8];
   return r[0] = c * i + h * o + m * g, r[1] = c * a + h * n + m * f, r[2] = c * _ + h * l + m * d, r[3] = T * i + y * o + b * g, r[4] = T * a + y * n + b * f, r[5] = T * _ + y * l + b * d, r[6] = w * i + A * o + R * g, r[7] = w * a + A * n + R * f, r[8] = w * _ + A * l + R * d, r;
 }
@@ -232,7 +239,7 @@ function V(r, e, t) {
   var i = e[0], a = e[1], _ = e[2], o = e[3], n = e[4], l = e[5], g = e[6], f = e[7], d = e[8], c = Math.sin(t), h = Math.cos(t);
   return r[0] = h * i + c * o, r[1] = h * a + c * n, r[2] = h * _ + c * l, r[3] = h * o - c * i, r[4] = h * n - c * a, r[5] = h * l - c * _, r[6] = g, r[7] = f, r[8] = d, r;
 }
-function L(r, e, t) {
+function U(r, e, t) {
   var i = t[0], a = t[1];
   return r[0] = i * e[0], r[1] = i * e[1], r[2] = i * e[2], r[3] = a * e[3], r[4] = a * e[4], r[5] = a * e[5], r[6] = e[6], r[7] = e[7], r[8] = e[8], r;
 }
@@ -242,11 +249,11 @@ function K(r, e) {
 function z(r, e, t) {
   return r[0] = 2 / e, r[1] = 0, r[2] = 0, r[3] = 0, r[4] = -2 / t, r[5] = 0, r[6] = -1, r[7] = 1, r[8] = 1, r;
 }
-function U() {
+function D() {
   var r = new E(2);
   return E != Float32Array && (r[0] = 0, r[1] = 0), r;
 }
-function D(r, e) {
+function M(r, e) {
   var t = new E(2);
   return t[0] = r, t[1] = e, t;
 }
@@ -255,7 +262,7 @@ function $(r, e, t) {
   return r[0] = t[0] * i + t[3] * a + t[6], r[1] = t[1] * i + t[4] * a + t[7], r;
 }
 (function() {
-  var r = U();
+  var r = D();
   return function(e, t, i, a, _, o) {
     var n, l;
     for (t || (t = 2), i || (i = 0), a ? l = Math.min(a * t + i, e.length) : l = e.length, n = i; n < l; n += t)
@@ -281,10 +288,10 @@ class u {
     const [t, i] = e.active_camera, a = x();
     P(a, i.matrix);
     const _ = x();
-    I(_, t.projection_matrix, a);
+    L(_, t.projection_matrix, a);
     const o = x();
     P(o, _);
-    const n = D(this._x, this._y), l = U();
+    const n = M(this._x, this._y), l = D();
     return $(l, n, o), new u(l[0], -l[1]);
   }
   is_within(e, t) {
@@ -307,7 +314,7 @@ class q extends k {
     s(this, "_depth", 0);
   }
   calculate_matrix() {
-    K(this._matrix, [this._position.x, this._position.y]), V(this._matrix, this._matrix, this._rotation * Math.PI / 180), L(this._matrix, this._matrix, [this._scale.x, this._scale.y]);
+    K(this._matrix, [this._position.x, this._position.y]), V(this._matrix, this._matrix, this._rotation * Math.PI / 180), U(this._matrix, this._matrix, [this._scale.x, this._scale.y]);
   }
   set position(t) {
     this._position = t, this.calculate_matrix();
@@ -394,7 +401,7 @@ class ee {
   constructor(e) {
     s(this, "_active_camera", null);
     s(this, "input", new Q());
-    s(this, "ecs", new B());
+    s(this, "ecs", new C());
     N(e);
   }
   set active_camera(e) {
@@ -410,7 +417,7 @@ class ee {
     const e = x();
     P(e, this._active_camera[1].matrix);
     const t = x();
-    I(t, this._active_camera[0].projection_matrix, e), p.shader.set_uniform_matrix("vp_matrix", t, 3), this.ecs.query([p, q]).forEach(([i, a]) => {
+    L(t, this._active_camera[0].projection_matrix, e), p.shader.set_uniform_matrix("vp_matrix", t, 3), this.ecs.query([p, q]).forEach(([i, a]) => {
       i.hidden || (p.shader.set_uniform_matrix("model_matrix", a.matrix, 3), p.shader.set_uniform_float("depth", [a.depth], 1), i.draw());
     });
   }
@@ -444,10 +451,10 @@ class re extends k {
     this.calculate_projection_matrix(t, i);
   }
   calculate_projection_matrix(t, i) {
-    z(this._projection_matrix, t, i), W(this._projection_matrix, this._projection_matrix, [t / 2, i / 2]), L(
+    z(this._projection_matrix, t, i), W(this._projection_matrix, this._projection_matrix, [t / 2, i / 2]), U(
       this._projection_matrix,
       this._projection_matrix,
-      D(t / 25, -t / 25)
+      M(t / 25, -t / 25)
     );
   }
   get projection_matrix() {
@@ -458,13 +465,13 @@ export {
   te as Buffer,
   re as Camera,
   k as Component,
-  B as ECS,
-  j as Entity,
+  C as ECS,
+  B as Entity,
   Q as InputManager,
   ee as Scene,
   X as Shader,
   p as Sprite,
-  C as Texture,
+  I as Texture,
   q as Transform,
   u as Vector2
 };
