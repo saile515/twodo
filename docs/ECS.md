@@ -1,7 +1,7 @@
 # Entitiy Component System
 
 Twodo uses an data-oriented entity component system inspired by Bevy. Every scene provides 
-an ECS through the `ecs` property. However, ECS' can also exist without a scene through the
+an ECS through the `ecs` property. However, ECSs can also exist without a scene through the
 `Twodo.ECS` class. The ECS is responsible for data and logic in the lifetime of the application.
 To achieve this, entities, components, and systems are used.
 
