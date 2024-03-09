@@ -10,23 +10,16 @@ let _sprite_shader: Shader<[], ["sampler", "vp_matrix", "model_matrix", "depth"]
 let _shader_ready = false;
 
 export default class Sprite extends Component {
-    private _texture: Texture;
+    private _texture!: Texture;
     private _failed = false;
     private _texture_ready: boolean = false;
+    private _src!: string;
     hidden = false;
 
-    constructor(image_source: string) {
+    constructor(src: string) {
         super();
 
-        this._texture = new Texture(image_source);
-        this._texture
-            .init()
-            .then(() => {
-                this._texture_ready = true;
-            })
-            .catch(() => {
-                this._failed = true;
-            });
+        this.src = src;
     }
 
     draw() {
@@ -41,6 +34,7 @@ export default class Sprite extends Component {
     }
 
     set src(src: string) {
+        this._src = src;
         this._texture = new Texture(src);
         this._texture
             .init()
@@ -50,6 +44,10 @@ export default class Sprite extends Component {
             .catch(() => {
                 this._failed = true;
             });
+    }
+
+    get src() {
+        return this._src;
     }
 
     get failed() {
