@@ -17,4 +17,4 @@ The sprite component handles rendering of a 2D texture. It must have a `Transfor
 
 ## Methods
 
-- draw <void> Draws the sprite. This should not be called manually, unless the sprite exists outside a scene ECS.
+- draw() <void> Draws the sprite. This should not be called manually, unless the sprite exists outside a scene ECS.
