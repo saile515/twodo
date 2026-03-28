@@ -14,7 +14,7 @@
         "Engine"
     ],
     "exports": {
-        "import": "./build/twodo.es.mjs",
+        "import": "./build/twodo.mjs",
         "types": "./build/twodo.d.ts"
     },
     "scripts": {

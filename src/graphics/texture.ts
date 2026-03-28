@@ -5,7 +5,7 @@ export class Texture {
 
     constructor(imageSource: string) {
         this._image.src = imageSource;
-        this._texture = gl.createTexture()!;
+        this._texture = gl.createTexture();
 
         this._image.addEventListener("error", () => (this._failed = true));
     }

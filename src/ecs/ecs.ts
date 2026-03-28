@@ -1,7 +1,12 @@
-import type { Constructor, InstancesOf } from "../types/util";
+import type { Constructor, InstanceOf } from "../types/util";
 
 import { Component } from "./component";
 import { Entity } from "./entity";
+
+export type ComponentRecipe<T extends Constructor<Component>> = [
+    T,
+    ...(ConstructorParameters<T> extends [any, ...infer Rest] ? Rest : never),
+];
 
 /** Entity Component System */
 export class ECS {
@@ -10,23 +15,30 @@ export class ECS {
 
     createComponent<T extends Constructor<Component>>(
         parent: Entity,
-        type: T,
-        ...args: Omit<ConstructorParameters<T>, "0">
+        [Component, ...args]: ComponentRecipe<T>,
     ) {
-        const instance = new type(parent, ...args);
+        const instance = new Component(parent, ...args);
 
-        this._components[type.name] ??= [];
-        this._components[type.name].push(instance);
+        this._components[Component.name] ??= [];
+        this._components[Component.name].push(instance);
 
-        return instance as InstancesOf<T>;
+        return instance as InstanceOf<T>;
     }
 
-    createEntity() {
+    createEntity<T extends readonly Constructor<Component>[]>(
+        ...componentRecipes: { [Index in keyof T]: ComponentRecipe<T[Index]> }
+    ) {
         const entity = new Entity();
+
+        const components: Component[] = [];
+
+        for (const recipe of componentRecipes) {
+            components.push(this.createComponent(entity, recipe));
+        }
 
         this._entities.push(entity);
 
-        return entity;
+        return components as { [Index in keyof T]: InstanceOf<T[Index]> };
     }
 
     deleteEntity(entity: Entity) {
@@ -51,18 +63,19 @@ export class ECS {
             return [];
         }
 
-        const components: { [key: string]: Component[] } = {};
+        const components: { [key: number]: Component[] } = {};
 
         for (let i = 0; i < query.length; i++) {
             for (const component of this._components[query[i].name]) {
-                components[component.parent!.id]?.push(component);
+                components[component.parent.id] ??= [];
+                components[component.parent.id].push(component);
             }
         }
 
         return Object.values(components).filter(
-            (component) => component.length == query.length,
+            (componentList) => componentList.length == query.length,
         ) as {
-            [Index in keyof Constructors]: InstancesOf<Constructors[Index]>;
+            [Index in keyof Constructors]: InstanceOf<Constructors[Index]>;
         }[];
     }
 }

@@ -24,7 +24,7 @@ export class Sprite extends Component {
     }
 
     draw() {
-        if (!this._textureReady || !Sprite.shader) {
+        if (!this._textureReady) {
             return;
         }
 

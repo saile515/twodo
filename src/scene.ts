@@ -29,7 +29,7 @@ export class Scene {
 
         this.input.mouse.clearDelta();
 
-        if (!this._activeCamera || !Sprite.shader) {
+        if (!this._activeCamera) {
             return;
         }
 
@@ -52,8 +52,8 @@ export class Scene {
                 return;
             }
 
-            Sprite.shader!.setUniformMatrix("model_matrix", transform.matrix);
-            Sprite.shader!.setUniformFloat("depth", [transform.depth]);
+            Sprite.shader.setUniformMatrix("model_matrix", transform.matrix);
+            Sprite.shader.setUniformFloat("depth", [transform.depth]);
             sprite.draw();
         });
     }

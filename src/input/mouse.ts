@@ -1,14 +1,17 @@
 import { Vector2 } from "../types/vector";
 
 export type MouseClickCallback = () => unknown;
+export type MouseClickCallbackType = "leftClick" | "rightClick" | "middleClick";
 
 export class Mouse {
     private _position = new Vector2(0, 0);
     private _lastPosition: Vector2 | null = null;
-    private _callbacks = {
-        leftClick: [] as MouseClickCallback[],
-        rightClick: [] as MouseClickCallback[],
-        middleClick: [] as MouseClickCallback[],
+    private _callbacks: {
+        [key in MouseClickCallbackType]: MouseClickCallback[];
+    } = {
+        leftClick: [],
+        rightClick: [],
+        middleClick: [],
     };
 
     constructor() {
@@ -56,7 +59,7 @@ export class Mouse {
     }
 
     registerCallback(
-        type: keyof typeof this._callbacks,
+        type: MouseClickCallbackType,
         callback: MouseClickCallback,
     ) {
         this._callbacks[type].push(callback);
@@ -64,7 +67,7 @@ export class Mouse {
     }
 
     unregisterCallback(
-        type: keyof typeof this._callbacks,
+        type: MouseClickCallbackType,
         callback: MouseClickCallback,
     ) {
         this._callbacks[type] = this._callbacks[type].filter(
