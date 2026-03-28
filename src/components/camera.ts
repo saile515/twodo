@@ -1,13 +1,14 @@
 import { mat3, vec2 } from "gl-matrix";
 
 import { Component } from "../ecs/component";
+import { Entity } from "../ecs/entity";
 import { Transform } from "../components/transform";
 
 export class Camera extends Component {
     private _projectionMatrix = mat3.create();
 
-    constructor(viewportWidth: number, viewportHeight: number) {
-        super();
+    constructor(parent: Entity, viewportWidth: number, viewportHeight: number) {
+        super(parent);
         this.calculateProjectionMatrix(viewportWidth, viewportHeight);
     }
 

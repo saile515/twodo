@@ -1,4 +1,4 @@
-export type ArrayElement<ArrayType extends readonly unknown[]> =
-    ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
+export type Constructor<T> = new (...args: any[]) => T;
 
-export type Callback = (...args: any[]) => any;
+export type InstancesOf<C extends Constructor<any>> =
+    C extends Constructor<infer T> ? T : never;

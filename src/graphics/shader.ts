@@ -1,18 +1,23 @@
 import type { Buffer } from "./buffer";
 
-export class Shader<Attributes extends string[], Uniforms extends string[]> {
+export class Shader<
+    Attributes extends readonly string[],
+    Uniforms extends readonly string[],
+> {
     private _vertex: string;
     private _fragment: string;
     private _attributeKeys: Attributes;
     private _uniformKeys: Uniforms;
     private _program: WebGLProgram;
-    private _attributes: { [key in Attributes[number]]: GLint } = {} as {
-        [key in Attributes[number]]: GLint;
+    private _attributes: { [Attribute in Attributes[number]]: GLint } = {} as {
+        [Attribute in Attributes[number]]: GLint;
     };
-    private _uniforms: { [key in Uniforms[number]]: WebGLUniformLocation } =
-        {} as {
-            [key in Uniforms[number]]: WebGLUniformLocation;
-        };
+    private _uniforms: {
+        [Uniform in Uniforms[number]]: WebGLUniformLocation;
+    } = {} as {
+        [Uniform in Uniforms[number]]: WebGLUniformLocation;
+    };
+    private _isCompiled = false;
 
     constructor(
         vertex: string,
@@ -25,35 +30,34 @@ export class Shader<Attributes extends string[], Uniforms extends string[]> {
         this._attributeKeys = attributes;
         this._uniformKeys = uniforms;
 
-        this._program = gl.createProgram()!;
+        this._program = gl.createProgram();
     }
 
-    async compile() {
-        // Compile vertex shader
+    get isCompiled() {
+        return this._isCompiled;
+    }
+
+    compile() {
         const vertexShader = gl.createShader(gl.VERTEX_SHADER)!;
         gl.shaderSource(vertexShader, this._vertex);
         gl.compileShader(vertexShader);
 
-        // Verify vertex shader
         if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
             console.error(gl.getShaderInfoLog(vertexShader));
             gl.deleteShader(vertexShader);
             throw Error("Vertex shader failed to compile.");
         }
 
-        // Compile fragment shader
         const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)!;
         gl.shaderSource(fragmentShader, this._fragment);
         gl.compileShader(fragmentShader);
 
-        // Verify fragment shader
         if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
             console.error(gl.getShaderInfoLog(fragmentShader));
             gl.deleteShader(fragmentShader);
             throw Error("Fragment shader failed to compile.");
         }
 
-        // Link shader program
         gl.attachShader(this._program, vertexShader);
         gl.attachShader(this._program, fragmentShader);
         gl.linkProgram(this._program);
@@ -62,19 +66,25 @@ export class Shader<Attributes extends string[], Uniforms extends string[]> {
             throw Error("Shader program failed to link.");
         }
 
-        // Initialize attributes and uniforms
-        this._attributeKeys.forEach((attribute) => {
+        for (const attribute of this._attributeKeys) {
             this._attributes[attribute as Attributes[number]] =
                 gl.getAttribLocation(this._program, attribute);
-        });
+        }
 
-        this._uniformKeys.forEach((uniform) => {
-            let uniformLocation = gl.getUniformLocation(this._program, uniform);
+        for (const uniform of this._uniformKeys) {
+            const uniformLocation = gl.getUniformLocation(
+                this._program,
+                uniform,
+            );
 
-            if (uniformLocation) {
-                this._uniforms[uniform as Uniforms[number]] = uniformLocation;
+            if (!uniformLocation) {
+                continue;
             }
-        });
+
+            this._uniforms[uniform as Uniforms[number]] = uniformLocation;
+        }
+
+        this._isCompiled = true;
     }
 
     use() {
@@ -94,53 +104,56 @@ export class Shader<Attributes extends string[], Uniforms extends string[]> {
         gl.enableVertexAttribArray(this._attributes[attribute]);
     }
 
-    // Components should be integer between 1 and 4
-    setUniformFloat(
-        uniform: Uniforms[number],
-        data: number[],
-        components: number,
-    ) {
-        // Throws an error if not called like this, do not touch
-        (gl as any)[
-            ("uniform" + components + "f") as keyof WebGL2RenderingContext
-        ](this._uniforms[uniform], ...data);
+    setUniformFloat(uniform: Uniforms[number], data: number[]) {
+        if (data.length < 1 || data.length > 4) {
+            throw new Error("Length of data must be in the range 1-4.");
+        }
+
+        (gl as any)[`uniform${data.length}f`](this._uniforms[uniform], ...data);
     }
 
-    // Components should be integer between 1 and 4
-    setUniformInt(
-        uniform: Uniforms[number],
-        data: number[],
-        components: number,
-    ) {
-        // Throws an error if not called like this, do not touch
-        (gl as any)[
-            ("uniform" + components + "i") as keyof WebGL2RenderingContext
-        ](this._uniforms[uniform], ...data);
+    setUniformInt(uniform: Uniforms[number], data: number[]) {
+        if (data.length < 1 || data.length > 4) {
+            throw new Error("Length of data must be in the range 1-4.");
+        }
+
+        (gl as any)[`uniform${data.length}i`](this._uniforms[uniform], ...data);
     }
 
-    // Components should be integer between 1 and 4
-    setUniformVector(
-        uniform: Uniforms[number],
-        data: number[],
-        components: number,
-    ) {
-        // Throws an error if not called like this, do not touch
-        (gl as any)[
-            ("uniform" + components + "fv") as keyof WebGL2RenderingContext
-        ](this._uniforms[uniform], data);
+    setUniformVector(uniform: Uniforms[number], data: number[]) {
+        if (data.length < 1 || data.length > 4) {
+            throw new Error("Length of data must be in the range 1-4.");
+        }
+
+        (gl as any)[`uniform${data.length}fv`](this._uniforms[uniform], data);
     }
 
-    // Components should be integer between 2 and 4, matrix of n*n size
     setUniformMatrix(
         uniform: Uniforms[number],
-        data: Float32Array,
-        components: number,
+        data: { [index: number]: number; length: number },
     ) {
-        // Throws an error if not called like this, do not touch
-        (gl as any)[
-            ("uniformMatrix" +
-                components +
-                "fv") as keyof WebGL2RenderingContext
-        ](this._uniforms[uniform], false, data);
+        let components: number;
+
+        switch (data.length) {
+            case 4:
+                components = 2;
+                break;
+            case 9:
+                components = 3;
+                break;
+            case 16:
+                components = 4;
+                break;
+            default:
+                throw new Error(
+                    `Invalid matrix size, expected length 4 | 9 | 16, got ${data.length}`,
+                );
+        }
+
+        (gl as any)[`uniformMatrix${components}fv`](
+            this._uniforms[uniform],
+            false,
+            data,
+        );
     }
 }

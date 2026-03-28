@@ -1,18 +1,18 @@
-import { Callback } from "../types/util";
 import { Vector2 } from "../types/vector";
+
+export type MouseClickCallback = () => unknown;
 
 export class Mouse {
     private _position = new Vector2(0, 0);
     private _lastPosition: Vector2 | null = null;
     private _callbacks = {
-        leftClick: [] as Callback[],
-        rightClick: [] as Callback[],
-        middleClick: [] as Callback[],
+        leftClick: [] as MouseClickCallback[],
+        rightClick: [] as MouseClickCallback[],
+        middleClick: [] as MouseClickCallback[],
     };
 
     constructor() {
         window.addEventListener("mousemove", (event) => {
-            // Normalized coordinates between -1 and 1.
             this._position = new Vector2(
                 (event.offsetX / gl.canvas.width) * 2 - 1,
                 (event.offsetY / gl.canvas.height) * 2 - 1,
@@ -45,10 +45,9 @@ export class Mouse {
     }
 
     get delta() {
-        // Fall back to returning delta 0 if last position does not exist.
-        return Vector2.sub(
+        return Vector2.subtract(
             this._position,
-            this._lastPosition || this._position,
+            this._lastPosition ?? this._position,
         );
     }
 
@@ -56,17 +55,20 @@ export class Mouse {
         return this._position;
     }
 
-    registerCallback(type: keyof typeof this._callbacks, callback: Callback) {
+    registerCallback(
+        type: keyof typeof this._callbacks,
+        callback: MouseClickCallback,
+    ) {
         this._callbacks[type].push(callback);
         return callback;
     }
 
-    unregisterCallback(callback: Callback) {
-        for (let callbackType in this._callbacks) {
-            this._callbacks[callbackType as keyof typeof this._callbacks] =
-                this._callbacks[
-                    callbackType as keyof typeof this._callbacks
-                ].filter((element) => element != callback);
-        }
+    unregisterCallback(
+        type: keyof typeof this._callbacks,
+        callback: MouseClickCallback,
+    ) {
+        this._callbacks[type] = this._callbacks[type].filter(
+            (element) => element != callback,
+        );
     }
 }

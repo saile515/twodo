@@ -15,7 +15,7 @@ export class Buffer {
         this._usage = settings.usage;
         this.components = settings.components;
 
-        this._buffer = gl.createBuffer()!;
+        this._buffer = gl.createBuffer();
     }
 
     set(data: number[]) {

@@ -1,26 +1,24 @@
 import { Component } from "../ecs/component";
+import { Entity } from "./../ecs/entity";
 import { Shader } from "../graphics/shader";
 import { Texture } from "../graphics/texture";
-import { draw } from "../graphics/webgl";
 import spriteFragmentShader from "../../shaders/sprite.frag.glsl?raw";
 import spriteVertexShader from "../../shaders/sprite.vert.glsl?raw";
 
-// vp_matrix = view projection matrix
-let _spriteShader: Shader<
-    [],
-    ["sampler", "vp_matrix", "model_matrix", "depth"]
->;
-let _shaderReady = false;
-
 export class Sprite extends Component {
+    private static _spriteShader: Shader<
+        [],
+        ["sampler", "vp_matrix", "model_matrix", "depth"]
+    >;
+
     private _texture!: Texture;
     private _failed = false;
     private _textureReady: boolean = false;
     private _src!: string;
     hidden = false;
 
-    constructor(src: string) {
-        super();
+    constructor(parent: Entity, src: string) {
+        super(parent);
 
         this.src = src;
     }
@@ -31,9 +29,9 @@ export class Sprite extends Component {
         }
 
         this._texture.use();
-        Sprite.shader.setUniformInt("sampler", [0], 1);
+        Sprite.shader.setUniformInt("sampler", [0]);
 
-        draw();
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
     set src(src: string) {
@@ -58,22 +56,19 @@ export class Sprite extends Component {
     }
 
     static get shader() {
-        if (!gl) return;
-        if (_spriteShader && _shaderReady) return _spriteShader;
-        if (_spriteShader && !_shaderReady) return;
+        if (!this._spriteShader) {
+            this._spriteShader = new Shader<
+                [],
+                ["sampler", "vp_matrix", "model_matrix", "depth"]
+            >(
+                spriteVertexShader,
+                spriteFragmentShader,
+                [],
+                ["sampler", "vp_matrix", "model_matrix", "depth"],
+            );
+            this._spriteShader.compile();
+        }
 
-        _spriteShader = new Shader<
-            [],
-            ["sampler", "vp_matrix", "model_matrix", "depth"]
-        >(
-            spriteVertexShader,
-            spriteFragmentShader,
-            [],
-            ["sampler", "vp_matrix", "model_matrix", "depth"],
-        );
-
-        _spriteShader.compile().then(() => {
-            _shaderReady = true;
-        });
+        return this._spriteShader;
     }
 }

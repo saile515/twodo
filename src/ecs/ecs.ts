@@ -1,73 +1,68 @@
-import type { ArrayElement } from "../types/util";
+import type { Constructor, InstancesOf } from "../types/util";
+
 import { Component } from "./component";
 import { Entity } from "./entity";
 
-// Entity Component System
+/** Entity Component System */
 export class ECS {
     private _entities: Entity[] = [];
     private _components: { [key: string]: Component[] } = {};
 
-    private addComponent(instance: Component) {
-        const className = instance.constructor.name;
+    createComponent<T extends Constructor<Component>>(
+        parent: Entity,
+        type: T,
+        ...args: Omit<ConstructorParameters<T>, "0">
+    ) {
+        const instance = new type(parent, ...args);
 
-        if (!this._components[className]) {
-            this._components[className] = [];
-        }
+        this._components[type.name] ??= [];
+        this._components[type.name].push(instance);
 
-        this._components[className].push(instance);
+        return instance as InstancesOf<T>;
     }
 
-    createEntity<T extends Component[]>(components: T) {
+    createEntity() {
         const entity = new Entity();
-
-        components.forEach((component) => {
-            component.setParent(entity);
-            this.addComponent(component);
-        });
 
         this._entities.push(entity);
 
-        return components;
+        return entity;
     }
 
     deleteEntity(entity: Entity) {
-        Object.entries(this._components).forEach(([type, components]) => {
-            this._components[type] = components.filter(
-                (component) => component.parent != entity,
-            );
-        });
+        for (const type in this._components) {
+            const components = this._components[type];
+
+            for (let i = 0; i < components.length; i++) {
+                if (components[i].parent != entity) {
+                    continue;
+                }
+
+                components.splice(i, 1);
+                i--;
+            }
+        }
     }
 
-    query<T extends Array<Component>>(
-        query: (new (...arg: any[]) => ArrayElement<T>)[],
+    query<Constructors extends readonly Constructor<Component>[]>(
+        query: [...Constructors],
     ) {
-        const components: { [key: string]: Component[] } = {};
-
-        // Initialize component array lookup table with first component in query.
-        this._components[query[0].name].forEach((component) => {
-            components[component.parent!.id] = [component];
-        });
-
-        for (let componentType of query) {
-            let componentName = componentType.name;
-
-            // Skip first component
-            if (componentName == query[0].name) {
-                continue;
-            }
-
-            // Add components to lookup table if they share parent
-            this._components[componentName].forEach((component) => {
-                const componentArray = components[component.parent!.id];
-                if (componentArray) {
-                    componentArray.push(component);
-                }
-            });
+        if (query.length == 0) {
+            return [];
         }
 
-        // Remove all component arrays that don't match all query components
+        const components: { [key: string]: Component[] } = {};
+
+        for (let i = 0; i < query.length; i++) {
+            for (const component of this._components[query[i].name]) {
+                components[component.parent!.id]?.push(component);
+            }
+        }
+
         return Object.values(components).filter(
             (component) => component.length == query.length,
-        ) as T[];
+        ) as {
+            [Index in keyof Constructors]: InstancesOf<Constructors[Index]>;
+        }[];
     }
 }

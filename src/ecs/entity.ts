@@ -1,3 +1,4 @@
 export class Entity {
-    readonly id = crypto.randomUUID();
+    private static _lastId = 0;
+    readonly id = Entity._lastId++;
 }

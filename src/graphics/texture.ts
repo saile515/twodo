@@ -1,13 +1,13 @@
 export class Texture {
     private _texture: WebGLTexture;
     private _image = new Image();
-    private _errored = false;
+    private _failed = false;
 
     constructor(imageSource: string) {
         this._image.src = imageSource;
         this._texture = gl.createTexture()!;
 
-        this._image.addEventListener("onerror", () => (this._errored = true));
+        this._image.addEventListener("error", () => (this._failed = true));
     }
 
     private handleLoadedImage() {
@@ -27,25 +27,28 @@ export class Texture {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     }
 
-    async init() {
-        if (this._image.complete && !this._errored) {
-            // Image has loaded
-            this.handleLoadedImage();
-            return Promise.resolve();
-        } else if (this._errored) {
-            // Image has errored
-            return Promise.reject("Image could not be loaded.");
-        } else {
-            // Image has not loaded
+    init() {
+        return new Promise<void>((resolve, reject) => {
+            if (this._failed) {
+                reject("Image could not be loaded.");
+                return;
+            }
+
+            if (this._image.complete) {
+                this.handleLoadedImage();
+                resolve();
+                return;
+            }
+
             this._image.addEventListener("load", () => {
                 this.handleLoadedImage();
-                return Promise.resolve();
+                resolve();
             });
 
             this._image.addEventListener("error", () => {
-                return Promise.reject("Image could not be loaded");
+                reject("Image could not be loaded");
             });
-        }
+        });
     }
 
     use() {

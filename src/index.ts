@@ -11,4 +11,3 @@ export { Sprite } from "./components/sprite";
 export { Transform } from "./components/transform";
 export { InputManager } from "./input/input-manager";
 export { Vector2 } from "./types/vector";
-export { type Callback } from "./types/util";

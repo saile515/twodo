@@ -9,10 +9,6 @@ export class Transform extends Component {
     private _rotation = 0;
     private _depth = 0;
 
-    constructor() {
-        super();
-    }
-
     private calculateMatrix() {
         mat3.fromTranslation(this._matrix, [
             this._position.x,

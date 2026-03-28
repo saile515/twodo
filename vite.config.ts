@@ -8,7 +8,8 @@ export default defineConfig({
         lib: {
             entry: "src/index.ts",
             name: "twodo",
-            fileName: (format) => `twodo.${format}.js`,
+            fileName: "twodo",
+            formats: ["es"],
         },
     },
 });

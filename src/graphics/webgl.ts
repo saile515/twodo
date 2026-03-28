@@ -24,12 +24,3 @@ export function initWebGL(canvas: HTMLCanvasElement) {
 
     global.gl = gl;
 }
-
-export function clear() {
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-}
-
-export function draw() {
-    // Assumes rectangle
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-}
