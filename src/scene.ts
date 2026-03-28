@@ -1,57 +1,72 @@
-import ECS from "./ecs/ecs";
-import Sprite from "./components/sprite.ts";
-import Transform from "./components/transform.ts";
-import { CameraBundle } from "./components/camera.ts";
-import { init_webgl, clear } from "./graphics/webgl.ts";
-import { mat3 } from "gl-matrix";
-import InputManager from "./input/input_manager.ts";
+import { clear, initWebGL } from "./graphics/webgl";
 
-export default class Scene {
-    private _active_camera: CameraBundle | null = null;
+import { CameraBundle } from "./components/camera";
+import { ECS } from "./ecs/ecs";
+import { InputManager } from "./input/input-manager";
+import { Sprite } from "./components/sprite";
+import { Transform } from "./components/transform";
+import { mat3 } from "gl-matrix";
+
+export class Scene {
+    private _activeCamera: CameraBundle | null = null;
 
     readonly input = new InputManager();
     readonly ecs = new ECS();
 
     constructor(canvas: HTMLCanvasElement) {
-        init_webgl(canvas);
+        initWebGL(canvas);
     }
 
-    set active_camera(camera: CameraBundle) {
-        this._active_camera = camera;
+    set activeCamera(camera: CameraBundle) {
+        this._activeCamera = camera;
     }
 
-    get active_camera(): CameraBundle | null {
-        return this._active_camera;
+    get activeCamera(): CameraBundle | null {
+        return this._activeCamera;
     }
 
     draw() {
         clear();
 
-        this.input.mouse.clear_delta();
+        this.input.mouse.clearDelta();
 
-        if (!this._active_camera || !Sprite.shader) {
+        if (!this._activeCamera || !Sprite.shader) {
             return;
         }
 
         Sprite.shader.use();
 
         // Create view matrix from camera transform
-        const view_matrix = mat3.create();
-        mat3.invert(view_matrix, this._active_camera[1].matrix);
+        const viewMatrix = mat3.create();
+        mat3.invert(viewMatrix, this._activeCamera[1].matrix);
 
-        const vp_matrix = mat3.create(); // View projection matrix
-        mat3.multiply(vp_matrix, this._active_camera[0].projection_matrix, view_matrix);
+        const vpMatrix = mat3.create(); // View projection matrix
+        mat3.multiply(
+            vpMatrix,
+            this._activeCamera[0].projectionMatrix,
+            viewMatrix,
+        );
 
-        Sprite.shader.set_uniform_matrix("vp_matrix", vp_matrix as Float32Array, 3);
+        Sprite.shader.setUniformMatrix(
+            "vp_matrix",
+            vpMatrix as Float32Array,
+            3,
+        );
 
-        this.ecs.query<[Sprite, Transform]>([Sprite, Transform]).forEach(([sprite, transform]) => {
-            if (sprite.hidden) {
-                return;
-            }
+        this.ecs
+            .query<[Sprite, Transform]>([Sprite, Transform])
+            .forEach(([sprite, transform]) => {
+                if (sprite.hidden) {
+                    return;
+                }
 
-            Sprite.shader!.set_uniform_matrix("model_matrix", transform.matrix as Float32Array, 3);
-            Sprite.shader!.set_uniform_float("depth", [transform.depth], 1);
-            sprite.draw();
-        });
+                Sprite.shader!.setUniformMatrix(
+                    "model_matrix",
+                    transform.matrix as Float32Array,
+                    3,
+                );
+                Sprite.shader!.setUniformFloat("depth", [transform.depth], 1);
+                sprite.draw();
+            });
     }
 }

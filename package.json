@@ -20,11 +20,10 @@
     },
     "homepage": "https://github.com/saile515/twodo#readme",
     "devDependencies": {
-        "@types/node": "^20.11.17",
-        "gl-matrix": "^3.4.3",
-        "path": "^0.12.7",
-        "typescript": "^5.3.3",
-        "vite": "^5.1.1",
-        "vite-plugin-dts": "^3.7.2"
+        "@types/node": "^25.5.0",
+        "gl-matrix": "^3.4.4",
+        "typescript": "^6.0.2",
+        "vite": "^8.0.3",
+        "vite-plugin-dts": "^4.5.4"
     }
 }

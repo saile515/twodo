@@ -2,11 +2,11 @@ declare global {
     var gl: Readonly<WebGL2RenderingContext>;
 }
 
-export function init_webgl(canvas: HTMLCanvasElement) {
-    const canvas_size = canvas.getBoundingClientRect();
+export function initWebGL(canvas: HTMLCanvasElement) {
+    const canvasSize = canvas.getBoundingClientRect();
 
-    canvas.width = canvas_size.width;
-    canvas.height = canvas_size.height;
+    canvas.width = canvasSize.width;
+    canvas.height = canvasSize.height;
 
     const gl = canvas.getContext("webgl2");
 

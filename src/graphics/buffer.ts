@@ -1,4 +1,4 @@
-export default class Buffer {
+export class Buffer {
     private _buffer: WebGLBuffer;
     private _target: GLenum;
     private _usage: GLenum;

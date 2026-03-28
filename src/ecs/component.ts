@@ -1,10 +1,10 @@
-import Entity from "./entity.ts";
+import { Entity } from "./entity";
 
-export default class Component {
+export class Component {
     private _parent: Entity | null = null;
 
     // Can only be called once. Should not be called unless component exists outside an ECS.
-    set_parent(parent: Entity) {
+    setParent(parent: Entity) {
         if (!this._parent) {
             this._parent = parent;
         }

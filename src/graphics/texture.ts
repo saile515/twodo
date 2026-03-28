@@ -1,18 +1,25 @@
-export default class Texture {
+export class Texture {
     private _texture: WebGLTexture;
     private _image = new Image();
     private _errored = false;
 
-    constructor(image_source: string) {
-        this._image.src = image_source;
+    constructor(imageSource: string) {
+        this._image.src = imageSource;
         this._texture = gl.createTexture()!;
 
         this._image.addEventListener("onerror", () => (this._errored = true));
     }
 
-    private handle_loaded_image() {
+    private handleLoadedImage() {
         gl.bindTexture(gl.TEXTURE_2D, this._texture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this._image);
+        gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            gl.RGBA,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            this._image,
+        );
 
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -23,7 +30,7 @@ export default class Texture {
     async init() {
         if (this._image.complete && !this._errored) {
             // Image has loaded
-            this.handle_loaded_image();
+            this.handleLoadedImage();
             return Promise.resolve();
         } else if (this._errored) {
             // Image has errored
@@ -31,7 +38,7 @@ export default class Texture {
         } else {
             // Image has not loaded
             this._image.addEventListener("load", () => {
-                this.handle_loaded_image();
+                this.handleLoadedImage();
                 return Promise.resolve();
             });
 

@@ -1,18 +1,21 @@
-import Component from "../ecs/component.ts";
-import Texture from "../graphics/texture.ts";
-import Shader from "../graphics/shader.ts";
-import { draw } from "../graphics/webgl.ts";
-import sprite_vertex_shader from "../../shaders/sprite.vert.glsl?raw";
-import sprite_fragment_shader from "../../shaders/sprite.frag.glsl?raw";
+import { Component } from "../ecs/component";
+import { Shader } from "../graphics/shader";
+import { Texture } from "../graphics/texture";
+import { draw } from "../graphics/webgl";
+import spriteFragmentShader from "../../shaders/sprite.frag.glsl?raw";
+import spriteVertexShader from "../../shaders/sprite.vert.glsl?raw";
 
 // vp_matrix = view projection matrix
-let _sprite_shader: Shader<[], ["sampler", "vp_matrix", "model_matrix", "depth"]>;
-let _shader_ready = false;
+let _spriteShader: Shader<
+    [],
+    ["sampler", "vp_matrix", "model_matrix", "depth"]
+>;
+let _shaderReady = false;
 
-export default class Sprite extends Component {
+export class Sprite extends Component {
     private _texture!: Texture;
     private _failed = false;
-    private _texture_ready: boolean = false;
+    private _textureReady: boolean = false;
     private _src!: string;
     hidden = false;
 
@@ -23,12 +26,12 @@ export default class Sprite extends Component {
     }
 
     draw() {
-        if (!this._texture_ready || !Sprite.shader) {
+        if (!this._textureReady || !Sprite.shader) {
             return;
         }
 
         this._texture.use();
-        Sprite.shader.set_uniform_int("sampler", [0], 1);
+        Sprite.shader.setUniformInt("sampler", [0], 1);
 
         draw();
     }
@@ -39,7 +42,7 @@ export default class Sprite extends Component {
         this._texture
             .init()
             .then(() => {
-                this._texture_ready = true;
+                this._textureReady = true;
             })
             .catch(() => {
                 this._failed = true;
@@ -56,18 +59,21 @@ export default class Sprite extends Component {
 
     static get shader() {
         if (!gl) return;
-        if (_sprite_shader && _shader_ready) return _sprite_shader;
-        if (_sprite_shader && !_shader_ready) return;
+        if (_spriteShader && _shaderReady) return _spriteShader;
+        if (_spriteShader && !_shaderReady) return;
 
-        _sprite_shader = new Shader<[], ["sampler", "vp_matrix", "model_matrix", "depth"]>(
-            sprite_vertex_shader,
-            sprite_fragment_shader,
+        _spriteShader = new Shader<
+            [],
+            ["sampler", "vp_matrix", "model_matrix", "depth"]
+        >(
+            spriteVertexShader,
+            spriteFragmentShader,
             [],
             ["sampler", "vp_matrix", "model_matrix", "depth"],
         );
 
-        _sprite_shader.compile().then(() => {
-            _shader_ready = true;
+        _spriteShader.compile().then(() => {
+            _shaderReady = true;
         });
     }
 }

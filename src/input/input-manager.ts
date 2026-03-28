@@ -1,6 +1,6 @@
-import Mouse from "./mouse.ts";
+import { Mouse } from "./mouse";
 
-export default class InputManager {
+export class InputManager {
     private _mouse = new Mouse();
 
     get mouse() {
