@@ -3,31 +3,48 @@ import type { Constructor, InstanceOf } from "../types/util";
 import { Component } from "./component";
 import { Entity } from "./entity";
 
-export type ComponentRecipe<T extends Constructor<Component>> = [
-    T,
-    ...(ConstructorParameters<T> extends [any, ...infer Rest] ? Rest : never),
-];
+export type ComponentRecipe<T extends Constructor<Component>> =
+    ConstructorParameters<T> extends [any, ...infer Rest]
+        ? [T, ...Rest]
+        : T | [T];
 
 /** Entity Component System */
 export class ECS {
     private _entities: Entity[] = [];
-    private _components: { [key: string]: Component[] } = {};
+    private _components = new Map<
+        Constructor<Component>,
+        Map<number, Component>
+    >();
 
-    createComponent<T extends Constructor<Component>>(
+    private createComponent<T extends Constructor<Component>>(
         parent: Entity,
-        [Component, ...args]: ComponentRecipe<T>,
+        recipe: ComponentRecipe<T>,
     ) {
+        const [Component, ...args] = Array.isArray(recipe) ? recipe : [recipe];
         const instance = new Component(parent, ...args);
 
-        this._components[Component.name] ??= [];
-        this._components[Component.name].push(instance);
+        if (!this._components.has(Component)) {
+            this._components.set(Component, new Map<number, Component>());
+        }
+
+        this._components.get(Component)!.set(parent.id, instance);
 
         return instance as InstanceOf<T>;
     }
 
-    createEntity<T extends readonly Constructor<Component>[]>(
-        ...componentRecipes: { [Index in keyof T]: ComponentRecipe<T[Index]> }
-    ) {
+    createEntity<
+        T extends readonly Constructor<Component>[],
+    >(componentRecipes: { [Index in keyof T]: ComponentRecipe<T[Index]> }) {
+        for (let i = 0; i < componentRecipes.length; i++) {
+            for (let l = i + 1; l < componentRecipes.length; l++) {
+                if (componentRecipes[i] == componentRecipes[l]) {
+                    throw new Error(
+                        "Only one instance of a component type is allowed per entity.",
+                    );
+                }
+            }
+        }
+
         const entity = new Entity();
 
         const components: Component[] = [];
@@ -42,39 +59,61 @@ export class ECS {
     }
 
     deleteEntity(entity: Entity) {
-        for (const type in this._components) {
-            const components = this._components[type];
-
-            for (let i = 0; i < components.length; i++) {
-                if (components[i].parent != entity) {
-                    continue;
-                }
-
-                components.splice(i, 1);
-                i--;
-            }
+        for (const [, components] of this._components) {
+            components.delete(entity.id);
         }
     }
 
     query<Constructors extends readonly Constructor<Component>[]>(
         query: [...Constructors],
     ) {
-        if (query.length == 0) {
-            return [];
-        }
-
-        const components: { [key: number]: Component[] } = {};
+        const componentMaps = new Array(query.length);
 
         for (let i = 0; i < query.length; i++) {
-            for (const component of this._components[query[i].name]) {
-                components[component.parent.id] ??= [];
-                components[component.parent.id].push(component);
+            const map = this._components.get(query[i]);
+
+            if (!map) {
+                return [];
+            }
+
+            componentMaps[i] = map;
+        }
+
+        const pairs = componentMaps.map((map, originalIndex) => ({
+            map,
+            originalIndex,
+        }));
+
+        pairs.sort((a, b) => a.map.size - b.map.size);
+
+        const results: Component[][] = [];
+
+        const first = pairs[0];
+
+        for (const [id, component] of first.map) {
+            const tuple = new Array(query.length);
+            tuple[first.originalIndex] = component;
+
+            let valid = true;
+
+            for (let i = 1; i < pairs.length; i++) {
+                const { map, originalIndex } = pairs[i];
+                const component = map.get(id);
+
+                if (!component) {
+                    valid = false;
+                    break;
+                }
+
+                tuple[originalIndex] = component;
+            }
+
+            if (valid) {
+                results.push(tuple);
             }
         }
 
-        return Object.values(components).filter(
-            (componentList) => componentList.length == query.length,
-        ) as {
+        return results as {
             [Index in keyof Constructors]: InstanceOf<Constructors[Index]>;
         }[];
     }
