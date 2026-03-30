@@ -1,3 +1,4 @@
+import { Context } from "../context";
 import { Vector2 } from "../types/vector";
 
 export type MouseClickCallback = () => unknown;
@@ -14,11 +15,11 @@ export class Mouse {
         middleClick: [],
     };
 
-    constructor() {
+    constructor(context: Context) {
         window.addEventListener("mousemove", (event) => {
             this._position = new Vector2(
-                (event.offsetX / gl.canvas.width) * 2 - 1,
-                (event.offsetY / gl.canvas.height) * 2 - 1,
+                (event.offsetX / context.gl.canvas.width) * 2 - 1,
+                (event.offsetY / context.gl.canvas.height) * 2 - 1,
             );
         });
 

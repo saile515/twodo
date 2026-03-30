@@ -1,9 +1,11 @@
 import type { Buffer } from "./buffer";
+import { Context } from "../context";
 
 export class Shader<
     Attributes extends readonly string[],
     Uniforms extends readonly string[],
 > {
+    private _gl: WebGL2RenderingContext;
     private _vertex: string;
     private _fragment: string;
     private _attributeKeys: Attributes;
@@ -17,62 +19,69 @@ export class Shader<
     } = {} as {
         [Uniform in Uniforms[number]]: WebGLUniformLocation;
     };
-    private _isCompiled = false;
 
     constructor(
+        context: Context,
         vertex: string,
         fragment: string,
         attributes: Attributes,
         uniforms: Uniforms,
     ) {
+        this._gl = context.gl;
         this._vertex = vertex;
         this._fragment = fragment;
         this._attributeKeys = attributes;
         this._uniformKeys = uniforms;
 
-        this._program = gl.createProgram();
+        this._program = this._gl.createProgram();
+        this.compile();
     }
 
-    get isCompiled() {
-        return this._isCompiled;
-    }
+    private compile() {
+        const vertexShader = this._gl.createShader(this._gl.VERTEX_SHADER)!;
+        this._gl.shaderSource(vertexShader, this._vertex);
+        this._gl.compileShader(vertexShader);
 
-    compile() {
-        const vertexShader = gl.createShader(gl.VERTEX_SHADER)!;
-        gl.shaderSource(vertexShader, this._vertex);
-        gl.compileShader(vertexShader);
-
-        if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-            console.error(gl.getShaderInfoLog(vertexShader));
-            gl.deleteShader(vertexShader);
+        if (
+            !this._gl.getShaderParameter(vertexShader, this._gl.COMPILE_STATUS)
+        ) {
+            console.error(this._gl.getShaderInfoLog(vertexShader));
+            this._gl.deleteShader(vertexShader);
             throw Error("Vertex shader failed to compile.");
         }
 
-        const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)!;
-        gl.shaderSource(fragmentShader, this._fragment);
-        gl.compileShader(fragmentShader);
+        const fragmentShader = this._gl.createShader(this._gl.FRAGMENT_SHADER)!;
+        this._gl.shaderSource(fragmentShader, this._fragment);
+        this._gl.compileShader(fragmentShader);
 
-        if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-            console.error(gl.getShaderInfoLog(fragmentShader));
-            gl.deleteShader(fragmentShader);
+        if (
+            !this._gl.getShaderParameter(
+                fragmentShader,
+                this._gl.COMPILE_STATUS,
+            )
+        ) {
+            console.error(this._gl.getShaderInfoLog(fragmentShader));
+            this._gl.deleteShader(fragmentShader);
             throw Error("Fragment shader failed to compile.");
         }
 
-        gl.attachShader(this._program, vertexShader);
-        gl.attachShader(this._program, fragmentShader);
-        gl.linkProgram(this._program);
+        this._gl.attachShader(this._program, vertexShader);
+        this._gl.attachShader(this._program, fragmentShader);
+        this._gl.linkProgram(this._program);
 
-        if (!gl.getProgramParameter(this._program, gl.LINK_STATUS)) {
+        if (
+            !this._gl.getProgramParameter(this._program, this._gl.LINK_STATUS)
+        ) {
             throw Error("Shader program failed to link.");
         }
 
         for (const attribute of this._attributeKeys) {
             this._attributes[attribute as Attributes[number]] =
-                gl.getAttribLocation(this._program, attribute);
+                this._gl.getAttribLocation(this._program, attribute);
         }
 
         for (const uniform of this._uniformKeys) {
-            const uniformLocation = gl.getUniformLocation(
+            const uniformLocation = this._gl.getUniformLocation(
                 this._program,
                 uniform,
             );
@@ -83,25 +92,23 @@ export class Shader<
 
             this._uniforms[uniform as Uniforms[number]] = uniformLocation;
         }
-
-        this._isCompiled = true;
     }
 
     use() {
-        gl.useProgram(this._program);
+        this._gl.useProgram(this._program);
     }
 
     setAttribute(attribute: Attributes[number], data: Buffer) {
         data.bind();
-        gl.vertexAttribPointer(
+        this._gl.vertexAttribPointer(
             this._attributes[attribute],
             data.components,
-            gl.FLOAT,
+            this._gl.FLOAT,
             false,
             0,
             0,
         );
-        gl.enableVertexAttribArray(this._attributes[attribute]);
+        this._gl.enableVertexAttribArray(this._attributes[attribute]);
     }
 
     setUniformFloat(uniform: Uniforms[number], data: number[]) {
@@ -109,7 +116,10 @@ export class Shader<
             throw new Error("Length of data must be in the range 1-4.");
         }
 
-        (gl as any)[`uniform${data.length}f`](this._uniforms[uniform], ...data);
+        (this._gl as any)[`uniform${data.length}f`](
+            this._uniforms[uniform],
+            ...data,
+        );
     }
 
     setUniformInt(uniform: Uniforms[number], data: number[]) {
@@ -117,7 +127,10 @@ export class Shader<
             throw new Error("Length of data must be in the range 1-4.");
         }
 
-        (gl as any)[`uniform${data.length}i`](this._uniforms[uniform], ...data);
+        (this._gl as any)[`uniform${data.length}i`](
+            this._uniforms[uniform],
+            ...data,
+        );
     }
 
     setUniformVector(uniform: Uniforms[number], data: number[]) {
@@ -125,7 +138,10 @@ export class Shader<
             throw new Error("Length of data must be in the range 1-4.");
         }
 
-        (gl as any)[`uniform${data.length}fv`](this._uniforms[uniform], data);
+        (this._gl as any)[`uniform${data.length}fv`](
+            this._uniforms[uniform],
+            data,
+        );
     }
 
     setUniformMatrix(
@@ -150,7 +166,7 @@ export class Shader<
                 );
         }
 
-        (gl as any)[`uniformMatrix${components}fv`](
+        (this._gl as any)[`uniformMatrix${components}fv`](
             this._uniforms[uniform],
             false,
             data,

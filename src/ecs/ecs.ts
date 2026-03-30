@@ -1,26 +1,27 @@
-import type { Constructor, InstanceOf } from "../types/util";
+import type {
+    Bundle,
+    Constructor,
+    InstanceOf,
+    Recipe,
+    RecipeComponent,
+} from "../types/util";
 
 import { Component } from "./component";
 import { Entity } from "./entity";
-
-export type ComponentRecipe<T extends Constructor<Component>> =
-    ConstructorParameters<T> extends [any, ...infer Rest]
-        ? [T, ...Rest]
-        : T | [T];
 
 /** Entity Component System */
 export class ECS {
     private _entities: Entity[] = [];
     private _components = new Map<
-        Constructor<Component>,
+        Constructor<Component, any[]>,
         Map<number, Component>
     >();
 
-    private createComponent<T extends Constructor<Component>>(
+    private createComponent<T extends Constructor<Component, any[]>>(
         parent: Entity,
-        recipe: ComponentRecipe<T>,
+        recipe: RecipeComponent<T>,
     ) {
-        const [Component, ...args] = Array.isArray(recipe) ? recipe : [recipe];
+        const [Component, ...args] = recipe;
         const instance = new Component(parent, ...args);
 
         if (!this._components.has(Component)) {
@@ -32,9 +33,7 @@ export class ECS {
         return instance as InstanceOf<T>;
     }
 
-    createEntity<
-        T extends readonly Constructor<Component>[],
-    >(componentRecipes: { [Index in keyof T]: ComponentRecipe<T[Index]> }) {
+    createEntity<T extends Bundle>(componentRecipes: Recipe<T>) {
         for (let i = 0; i < componentRecipes.length; i++) {
             for (let l = i + 1; l < componentRecipes.length; l++) {
                 if (componentRecipes[i] == componentRecipes[l]) {
@@ -64,9 +63,7 @@ export class ECS {
         }
     }
 
-    query<Constructors extends readonly Constructor<Component>[]>(
-        query: [...Constructors],
-    ) {
+    query<Constructors extends Bundle>(query: Constructors) {
         const componentMaps = new Array(query.length);
 
         for (let i = 0; i < query.length; i++) {
