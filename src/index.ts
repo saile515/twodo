@@ -16,6 +16,9 @@ export * from "./graphics/texture";
 export * from "./input/input-manager";
 export * from "./input/mouse";
 
+export * from "./lib/collection";
+export * from "./lib/projection";
+
 export * from "./systems/renderer";
 export * from "./systems/sprite-renderer";
 
