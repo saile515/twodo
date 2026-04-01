@@ -1,7 +1,7 @@
 {
     "name": "twodo",
-    "version": "0.0.7",
-    "description": "A minimal 2D WebGL engine.",
+    "version": "0.0.8",
+    "description": "A minimal data-oriented 2D WebGL engine.",
     "author": "Elias Jörgensen",
     "license": "MIT",
     "homepage": "https://github.com/saile515/twodo#readme",
@@ -12,6 +12,9 @@
         "2D",
         "WebGL",
         "Engine"
+    ],
+    "files": [
+        "./build/*"
     ],
     "exports": {
         "import": "./build/twodo.mjs",
