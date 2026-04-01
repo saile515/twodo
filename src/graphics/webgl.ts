@@ -4,7 +4,7 @@ export function createWebGLContext(canvas: HTMLCanvasElement) {
     canvas.width = canvasSize.width;
     canvas.height = canvasSize.height;
 
-    const gl = canvas.getContext("webgl2");
+    const gl = canvas.getContext("webgl2", { antialias: true });
 
     if (!gl) {
         throw new Error("This browser does not support WebGL2.");

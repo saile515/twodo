@@ -6,6 +6,7 @@ import type {
     RecipeComponent,
 } from "../types/util";
 
+import { Collection } from "../lib/collection";
 import { Component } from "./component";
 import { Entity } from "./entity";
 
@@ -63,14 +64,18 @@ export class ECS {
         }
     }
 
-    query<Constructors extends Bundle>(query: Constructors) {
+    query<const Constructors extends Bundle>(
+        query: Constructors,
+    ): Collection<{
+        [Index in keyof Constructors]: InstanceOf<Constructors[Index]>;
+    }> {
         const componentMaps = new Array(query.length);
 
         for (let i = 0; i < query.length; i++) {
             const map = this._components.get(query[i]);
 
             if (!map) {
-                return [];
+                return new Collection();
             }
 
             componentMaps[i] = map;
@@ -110,8 +115,10 @@ export class ECS {
             }
         }
 
-        return results as {
-            [Index in keyof Constructors]: InstanceOf<Constructors[Index]>;
-        }[];
+        return new Collection(
+            ...(results as {
+                [Index in keyof Constructors]: InstanceOf<Constructors[Index]>;
+            }[]),
+        );
     }
 }

@@ -4,17 +4,16 @@ import {
     spriteRendererBundle,
     spriteShader,
 } from "./sprite-renderer";
-import { mat3, vec2 } from "gl-matrix";
 
 import { Camera } from "../components/camera";
 import { Context } from "../context";
 import { Transform } from "../components/transform";
+import { createProjectMatrix } from "../lib/projection";
+import { mat3 } from "gl-matrix";
 
 export const cameraBundle = [Camera, Transform] as const;
 
 export function renderer(context: Context) {
-    context.gl.clear(context.gl.COLOR_BUFFER_BIT | context.gl.DEPTH_BUFFER_BIT);
-
     context.input.mouse.clearDelta();
 
     const camera = context.ecs
@@ -31,22 +30,13 @@ export function renderer(context: Context) {
     const viewMatrix = mat3.create();
     mat3.invert(viewMatrix, camera[1].matrix);
 
-    const projectionMatrix = mat3.create();
-
     const viewportWidth = context.gl.canvas.width;
     const viewportHeight = context.gl.canvas.height;
 
-    mat3.projection(projectionMatrix, viewportWidth, viewportWidth);
-    mat3.translate(projectionMatrix, projectionMatrix, [
-        viewportWidth / 2,
-        viewportHeight / 2,
-    ]);
-    // Create appropriate scale relative to screen width
-    mat3.scale(
-        projectionMatrix,
-        projectionMatrix,
-        vec2.fromValues(viewportWidth / 25, -viewportWidth / 25),
-    );
+    context.gl.viewport(0, 0, viewportWidth, viewportHeight);
+    context.gl.clear(context.gl.COLOR_BUFFER_BIT | context.gl.DEPTH_BUFFER_BIT);
+
+    const projectionMatrix = createProjectMatrix(viewportWidth, viewportHeight);
 
     const vpMatrix = mat3.create();
     mat3.multiply(vpMatrix, projectionMatrix, viewMatrix);

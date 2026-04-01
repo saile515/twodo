@@ -1,3 +1,10 @@
+import { mat3, vec2 } from "gl-matrix";
+
+import { Camera } from "../components/camera";
+import { Context } from "../context";
+import { Transform } from "../components/transform";
+import { createProjectMatrix } from "../lib/projection";
+
 export class Vector2 {
     private _x: number;
     private _y: number;
@@ -19,6 +26,38 @@ export class Vector2 {
         return (
             a.x <= this._x && b.x >= this._x && a.y <= this._y && b.y >= this._y
         );
+    }
+
+    clipSpaceToWorldSpace(context: Context) {
+        const cameraBundle = context.ecs
+            .query([Camera, Transform])
+            .find(([camera]) => camera.active);
+
+        if (!cameraBundle) {
+            throw new Error("No active camera in context.");
+        }
+
+        const [, transform] = cameraBundle;
+
+        const viewMatrix = mat3.create();
+        mat3.invert(viewMatrix, transform.matrix);
+
+        const projectionMatrix = createProjectMatrix(
+            context.gl.canvas.width,
+            context.gl.canvas.height,
+        );
+
+        const vpMatrix = mat3.create();
+        mat3.multiply(vpMatrix, projectionMatrix, viewMatrix);
+
+        const inversed = mat3.create();
+        mat3.invert(inversed, vpMatrix);
+
+        const clipSpace = vec2.fromValues(this._x, this._y);
+        const worldSpace = vec2.create();
+        vec2.transformMat3(worldSpace, clipSpace, inversed);
+
+        return new Vector2(worldSpace[0], -worldSpace[1]);
     }
 
     static subtract(a: Vector2, b: Vector2) {

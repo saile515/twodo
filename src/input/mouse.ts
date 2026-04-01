@@ -16,14 +16,20 @@ export class Mouse {
     };
 
     constructor(context: Context) {
-        window.addEventListener("mousemove", (event) => {
+        const canvas = context.gl.canvas as HTMLCanvasElement;
+        canvas.addEventListener("mousemove", (event) => {
             this._position = new Vector2(
-                (event.offsetX / context.gl.canvas.width) * 2 - 1,
-                (event.offsetY / context.gl.canvas.height) * 2 - 1,
+                ((event.offsetX * devicePixelRatio) / context.gl.canvas.width) *
+                    2 -
+                    1,
+                ((event.offsetY * devicePixelRatio) /
+                    context.gl.canvas.height) *
+                    2 -
+                    1,
             );
         });
 
-        window.addEventListener("click", (event) => {
+        canvas.addEventListener("click", (event) => {
             switch (event.button) {
                 case 0:
                     this._callbacks.leftClick.forEach((callback) => callback());
