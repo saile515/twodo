@@ -22,5 +22,6 @@ export * from "./lib/projection";
 export * from "./systems/renderer";
 export * from "./systems/sprite-renderer";
 
+export * from "./types/axis";
 export * from "./types/util";
 export * from "./types/vector";

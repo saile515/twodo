@@ -37,15 +37,12 @@ export class Vector2 {
             throw new Error("No active camera in context.");
         }
 
-        const [, transform] = cameraBundle;
+        const [camera, transform] = cameraBundle;
 
         const viewMatrix = mat3.create();
         mat3.invert(viewMatrix, transform.matrix);
 
-        const projectionMatrix = createProjectMatrix(
-            context.gl.canvas.width,
-            context.gl.canvas.height,
-        );
+        const projectionMatrix = createProjectMatrix(context, camera);
 
         const vpMatrix = mat3.create();
         mat3.multiply(vpMatrix, projectionMatrix, viewMatrix);

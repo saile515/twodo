@@ -36,7 +36,7 @@ export function renderer(context: Context) {
     context.gl.viewport(0, 0, viewportWidth, viewportHeight);
     context.gl.clear(context.gl.COLOR_BUFFER_BIT | context.gl.DEPTH_BUFFER_BIT);
 
-    const projectionMatrix = createProjectMatrix(viewportWidth, viewportHeight);
+    const projectionMatrix = createProjectMatrix(context, camera[0]);
 
     const vpMatrix = mat3.create();
     mat3.multiply(vpMatrix, projectionMatrix, viewMatrix);
