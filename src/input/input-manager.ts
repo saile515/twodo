@@ -1,14 +1,13 @@
 import { Context } from "../context";
+import { Keyboard } from "./keyboard";
 import { Mouse } from "./mouse";
 
 export class InputManager {
-    private _mouse: Mouse;
+    readonly mouse: Mouse;
+    readonly keyboard: Keyboard;
 
     constructor(context: Context) {
-        this._mouse = new Mouse(context);
-    }
-
-    get mouse() {
-        return this._mouse;
+        this.mouse = new Mouse(context);
+        this.keyboard = new Keyboard(context);
     }
 }

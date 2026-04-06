@@ -1,19 +1,21 @@
 import { Context } from "../context";
+import { Event } from "../lib/event";
 import { Vector2 } from "../types/vector";
 
-export type MouseClickCallback = () => unknown;
-export type MouseClickCallbackType = "leftClick" | "rightClick" | "middleClick";
+export enum MouseButton {
+    Left = "left",
+    Right = "right",
+    Middle = "middle",
+}
 
 export class Mouse {
     private _position = new Vector2(0, 0);
     private _lastPosition: Vector2 | null = null;
-    private _callbacks: {
-        [key in MouseClickCallbackType]: MouseClickCallback[];
-    } = {
-        leftClick: [],
-        rightClick: [],
-        middleClick: [],
-    };
+    private _left = false;
+    private _right = false;
+    private _middle = false;
+    readonly clickEvent = new Event<[MouseButton]>();
+    readonly moveEvent = new Event<[Vector2]>();
 
     constructor(context: Context) {
         const canvas = context.gl.canvas as HTMLCanvasElement;
@@ -27,27 +29,36 @@ export class Mouse {
                     2 -
                     1,
             );
+            this.moveEvent.invoke(this._position);
         });
 
         canvas.addEventListener("click", (event) => {
             switch (event.button) {
                 case 0:
-                    this._callbacks.leftClick.forEach((callback) => callback());
+                    this.clickEvent.invoke(MouseButton.Left);
                     break;
                 case 1:
-                    this._callbacks.rightClick.forEach((callback) =>
-                        callback(),
-                    );
+                    this.clickEvent.invoke(MouseButton.Right);
                     break;
                 case 2:
-                    this._callbacks.middleClick.forEach((callback) =>
-                        callback(),
-                    );
+                    this.clickEvent.invoke(MouseButton.Middle);
                     break;
                 default:
                     break;
             }
         });
+
+        canvas.addEventListener(
+            "mousedown",
+            this.mouseUpDownCallback.bind(this),
+        );
+        canvas.addEventListener("mouseup", this.mouseUpDownCallback.bind(this));
+    }
+
+    private mouseUpDownCallback(event: MouseEvent) {
+        this._left = (event.buttons & 0b001) > 0;
+        this._right = (event.buttons & 0b010) > 0;
+        this._middle = (event.buttons & 0b100) > 0;
     }
 
     clearDelta() {
@@ -65,20 +76,15 @@ export class Mouse {
         return this._position;
     }
 
-    registerCallback(
-        type: MouseClickCallbackType,
-        callback: MouseClickCallback,
-    ) {
-        this._callbacks[type].push(callback);
-        return callback;
+    get left() {
+        return this._left;
     }
 
-    unregisterCallback(
-        type: MouseClickCallbackType,
-        callback: MouseClickCallback,
-    ) {
-        this._callbacks[type] = this._callbacks[type].filter(
-            (element) => element != callback,
-        );
+    get right() {
+        return this._right;
+    }
+
+    get middle() {
+        return this._middle;
     }
 }

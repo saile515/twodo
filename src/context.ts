@@ -9,10 +9,17 @@ export class Context {
     readonly input;
     readonly ecs = new ECS();
     readonly gl: WebGL2RenderingContext;
+    private _lastUpdate = 0;
+    private _deltaTime = 0;
 
     constructor(canvas: HTMLCanvasElement) {
+        canvas.tabIndex = 0;
         this.gl = createWebGLContext(canvas);
         this.input = new InputManager(this);
+    }
+
+    get deltaTime() {
+        return this._deltaTime;
     }
 
     invoke<T extends Bundle>(system: System<BundleInstance<T>>, query: T): void;
@@ -24,5 +31,11 @@ export class Context {
         }
 
         this.ecs.query(query).forEach((instance) => system(this, instance));
+    }
+
+    startUpdate() {
+        const now = performance.now();
+        this._deltaTime = (now - this._lastUpdate) / 1000;
+        this._lastUpdate = now;
     }
 }

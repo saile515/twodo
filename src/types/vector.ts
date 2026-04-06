@@ -64,4 +64,24 @@ export class Vector2 {
     static add(a: Vector2, b: Vector2) {
         return new Vector2(a.x + b.x, a.y + b.y);
     }
+
+    static get zero() {
+        return new Vector2(0, 0);
+    }
+
+    static get up() {
+        return new Vector2(0, 1);
+    }
+
+    static get right() {
+        return new Vector2(1, 0);
+    }
+
+    static get down() {
+        return new Vector2(0, -1);
+    }
+
+    static get left() {
+        return new Vector2(-1, 0);
+    }
 }

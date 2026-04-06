@@ -14,9 +14,11 @@ export * from "./graphics/shader";
 export * from "./graphics/texture";
 
 export * from "./input/input-manager";
+export * from "./input/keyboard";
 export * from "./input/mouse";
 
 export * from "./lib/collection";
+export * from "./lib/event";
 export * from "./lib/projection";
 
 export * from "./systems/renderer";
